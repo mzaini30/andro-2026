@@ -5,40 +5,26 @@ echo ============================================
 echo.
 
 set SDK_ROOT=%CD%\android-sdk
-set CMDLINE_TOOLS_URL=https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip
-set CMDLINE_TOOLS_ZIP=%TEMP%\commandlinetools.zip
+set CMDLINE_TOOLS_ZIP=%CD%\commandlinetools-win-11076708_latest (1).zip
 
-echo Downloading Android SDK Command-line Tools...
-powershell -Command "Invoke-WebRequest -Uri '%CMDLINE_TOOLS_URL%' -OutFile '%CMDLINE_TOOLS_ZIP%'"
-
-if errorlevel 1 (
-    echo Download failed!
+if not exist "%CMDLINE_TOOLS_ZIP%" (
+    echo ZIP file not found!
     exit /b 1
 )
 
-echo Extracting...
+echo Extracting from %CMDLINE_TOOLS_ZIP%...
 if exist "%SDK_ROOT%" rmdir /s /q "%SDK_ROOT%"
-mkdir "%SDK_ROOT%\cmdline-tools"
+mkdir "%SDK_ROOT%\cmdline-tools\latest"
 
-powershell -Command "Expand-Archive -Path '%CMDLINE_TOOLS_ZIP%' -DestinationPath '%TEMP%\cmdline-tools' -Force"
-
-move "%TEMP%\cmdline-tools\cmdline-tools" "%SDK_ROOT%\cmdline-tools\latest"
-
-del "%CMDLINE_TOOLS_ZIP%"
+powershell -NoProfile -Command "Add-Type -Assembly System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory('%CMDLINE_TOOLS_ZIP%', '%SDK_ROOT%\cmdline-tools\latest')"
 
 echo.
-echo Installing required SDK components...
+echo Accepting licenses...
+echo y | "%SDK_ROOT%\cmdline-tools\latest\bin\sdkmanager.bat" --sdk_root="%SDK_ROOT%" --licenses 2>nul
+
 echo.
-
-set PATH=%PATH%;%SDK_ROOT%\cmdline-tools\latest\bin
-
-yes | sdkmanager --sdk_root=%SDK_ROOT% "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-
-if errorlevel 1 (
-    echo.
-    echo Installing components...
-    sdkmanager --sdk_root=%SDK_ROOT% "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-)
+echo Installing SDK components (this may take a while)...
+"%SDK_ROOT%\cmdline-tools\latest\bin\sdkmanager.bat" --sdk_root="%SDK_ROOT%" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
 echo.
 echo Updating local.properties...

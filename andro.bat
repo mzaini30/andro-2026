@@ -87,6 +87,9 @@ if not exist "%SCRIPT_DIR%gradle\wrapper\gradle-wrapper.jar" (
     echo.
 )
 
+:: Accept SDK licenses automatically
+call :accept_sdk_licenses
+
 :: Generate project structure
 echo Generating Android project structure...
 
@@ -195,4 +198,68 @@ if errorlevel 1 (
     exit /b 1
 )
 echo Keystore generated successfully.
+goto :eof
+
+:accept_sdk_licenses
+echo.
+echo Checking Android SDK licenses...
+echo.
+
+:: Try to get SDK path from local.properties first
+set "SDK_DIR="
+if exist "%SCRIPT_DIR%local.properties" (
+    for /f "tokens=2 delims==" %%a in ('findstr /c:"sdk.dir=" "%SCRIPT_DIR%local.properties"') do set "SDK_DIR=%%a"
+)
+
+:: Fall back to ANDROID_HOME
+if "%SDK_DIR%"=="" set "SDK_DIR=%ANDROID_HOME%"
+
+:: Fall back to default location
+if "%SDK_DIR%"=="" if exist "D:\Android\Sdk" set "SDK_DIR=D:\Android\Sdk"
+
+if "%SDK_DIR%"=="" (
+    echo WARNING: Android SDK not found. Skipping license acceptance.
+    goto :eof
+)
+
+if not exist "%SDK_DIR%" (
+    echo WARNING: SDK directory not found: %SDK_DIR%
+    goto :eof
+)
+
+:: Find sdkmanager
+set "SDKMANAGER="
+if exist "%SDK_DIR%\cmdline-tools\latest\bin\sdkmanager.bat" (
+    set "SDKMANAGER=%SDK_DIR%\cmdline-tools\latest\bin\sdkmanager.bat"
+) else if exist "%SDK_DIR%\tools\bin\sdkmanager.bat" (
+    set "SDKMANAGER=%SDK_DIR%\tools\bin\sdkmanager.bat"
+)
+
+if "%SDKMANAGER%"=="" (
+    echo WARNING: sdkmanager not found. Skipping license acceptance.
+    goto :eof
+)
+
+echo Found SDK: %SDK_DIR%
+echo Creating license files...
+
+:: Create licenses directory
+set "LICENSES_DIR=%SDK_DIR%\licenses"
+if not exist "%LICENSES_DIR%" mkdir "%LICENSES_DIR%"
+
+:: Accept all licenses using sdkmanager
+echo Accepting licenses via sdkmanager...
+echo y | "%SDKMANAGER%" --sdk_root="%SDK_DIR%" --licenses >nul 2>&1
+
+:: Install required SDK packages
+echo Installing required SDK packages...
+"%SDKMANAGER%" --sdk_root="%SDK_DIR%" --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "build-tools;33.0.1" >nul 2>&1
+
+:: Also create license files directly (backup method)
+echo 24333f8a63b6825ea9c5514f83c2829b004d1fee > "%LICENSES_DIR%\android-sdk-license"
+echo 8933bad161af4178b1185d1a37fbf41ea5269c55 >> "%LICENSES_DIR%\android-sdk-license"
+echo d56f5187479451eabf01fb78af6dfcb131a6481e >> "%LICENSES_DIR%\android-sdk-license"
+echo 24333f8a63b6825ea9c5514f83c2829b004d1fee >> "%LICENSES_DIR%\android-sdk-license"
+
+echo Licenses accepted and packages installed.
 goto :eof

@@ -63,3 +63,5 @@ Thumbs.db
 
 # Gradle wrapper logs
 gradle-app.setting
+*.zip
+android-sdk
