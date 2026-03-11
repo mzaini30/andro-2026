@@ -1,1 +1,21 @@
-https://dl.google.com/android/repository/platform-34-ext8.zip
+Pas saya buka aplikasinya, ketika saya menuju ke about.html melalui link yang di index.html, dia error not found. Perbaiki
+
+Tulisannya itu Halaman web di file:///about.html tidak dapat dimuat karena: net::ERR_FILE_NOT_FOUND
+
+Sepertinya kamu seharusnya menggunakan ini:
+
+import androidx.webkit.WebViewAssetLoader;
+import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
+
+ final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
+            // .setDomain("api.example.com")
+            .addPathHandler("/assets/", new AssetsPathHandler(this))
+            .build();
+
+             if (savedInstanceState == null) {
+            webview.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+        }
+
+        Untuk contohnya, pelajari dari ./contoh-activity.java
+
+Jangan lupa update juga file ./generate_project.ps1

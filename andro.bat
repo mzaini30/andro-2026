@@ -241,19 +241,19 @@ if "%SDKMANAGER%"=="" (
 )
 
 echo Found SDK: %SDK_DIR%
-echo Creating license files...
+@REM echo Creating license files...
 
 :: Create licenses directory
-set "LICENSES_DIR=%SDK_DIR%\licenses"
-if not exist "%LICENSES_DIR%" mkdir "%LICENSES_DIR%"
+@REM set "LICENSES_DIR=%SDK_DIR%\licenses"
+@REM if not exist "%LICENSES_DIR%" mkdir "%LICENSES_DIR%"
 
 :: Accept all licenses using sdkmanager
-echo Accepting licenses via sdkmanager...
-echo y | "%SDKMANAGER%" --sdk_root="%SDK_DIR%" --licenses >nul 2>&1
+@REM echo Accepting licenses via sdkmanager...
+@REM echo y | "%SDKMANAGER%" --sdk_root="%SDK_DIR%" --licenses >nul 2>&1
 
 :: Install required SDK packages
-echo Installing required SDK packages...
-"%SDKMANAGER%" --sdk_root="%SDK_DIR%" --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "build-tools;33.0.1" >nul 2>&1
+@REM echo Installing required SDK packages...
+@REM "%SDKMANAGER%" --sdk_root="%SDK_DIR%" --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "build-tools;33.0.1" >nul 2>&1
 
 :: Also create license files directly (backup method)
 echo 24333f8a63b6825ea9c5514f83c2829b004d1fee > "%LICENSES_DIR%\android-sdk-license"
