@@ -69,8 +69,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Initialize Start.io SDK
-        StartAppSDK.init(this, "202843390", true);
-        StartAppAd.disableSplash(); // Disable splash if it causes issues, or keep it. User said ads not showing.
+        if (!"202843390".isEmpty()) {
+            StartAppSDK.init(this, "202843390", true);
+        }
 
         // Request permissions
         requestPermissions();
@@ -87,22 +88,24 @@ public class MainActivity extends AppCompatActivity {
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
 
-        // Create Banner
-        Banner startAppBanner = new Banner(this);
-        startAppBanner.setId(View.generateViewId());
-        RelativeLayout.LayoutParams bannerParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT);
-        bannerParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        bannerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        if (!"202843390".isEmpty()) {
+            // Create Banner
+            Banner startAppBanner = new Banner(this);
+            startAppBanner.setId(View.generateViewId());
+            RelativeLayout.LayoutParams bannerParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+            bannerParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            bannerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
-        // Align WebView above Banner
-        webViewParams.addRule(RelativeLayout.ABOVE, startAppBanner.getId());
+            // Align WebView above Banner
+            webViewParams.addRule(RelativeLayout.ABOVE, startAppBanner.getId());
 
-        // Add views to layout
-        layout.addView(startAppBanner, bannerParams);
+            // Add views to layout
+            layout.addView(startAppBanner, bannerParams);
+        }
+
         layout.addView(webView, webViewParams);
-
         setContentView(layout);
 
         // Configure WebView

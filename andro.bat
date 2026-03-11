@@ -10,6 +10,7 @@ set "CONFIG_FILE=%SCRIPT_DIR%andro.yml"
 if "%1"=="" goto :build
 if "%1"=="build" goto :build
 if "%1"=="clean" goto :clean
+if "%1"=="init" goto :init
 if "%1"=="help" goto :help
 
 echo Unknown command: %1
@@ -24,9 +25,27 @@ echo.
 echo Commands:
 echo   build    Build APK and AAB from andro.yml (default)
 echo   clean    Clean build artifacts
+echo   init     Initialize a new project (create andro.yml)
 echo   help     Show this help message
 echo.
 echo Configuration file: andro.yml
+goto :eof
+
+:init
+if exist "%CONFIG_FILE%" (
+    echo ERROR: %CONFIG_FILE% already exists.
+    exit /b 1
+)
+echo Creating default %CONFIG_FILE%...
+(
+echo - title: "My Awesome App"
+echo - version: "1"
+echo - package: "com.example.myapp"
+echo - icon: "round.png"
+echo - web: "html"
+echo - ads: "202843390"
+) > "%CONFIG_FILE%"
+echo Done. Edit %CONFIG_FILE% to configure your app.
 goto :eof
 
 :clean

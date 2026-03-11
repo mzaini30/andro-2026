@@ -1,3 +1,1 @@
-Kenapa iklannya nggak tampil
-
-Jangan lupa update juga file ./generate_project.ps1
+Coba buatkan perintah seperti "andro init" yang nanti akan membuat file andro.yml dengan dummy isian dan buatkan juga andro.md yang merupakan catatan tentang andro untuk LLM AI Coding
