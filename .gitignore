@@ -34,8 +34,8 @@ local.properties
 .navigation/
 
 # Keystore files
-*.jks
-*.keystore
+# *.jks
+# *.keystore
 
 # External native build
 .externalNativeBuild/
