@@ -22,6 +22,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,7 @@ import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
 
 import com.startapp.sdk.adsbase.StartAppSDK;
 import com.startapp.sdk.adsbase.StartAppAd;
+import com.startapp.sdk.ads.banner.Banner;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,13 +70,40 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize Start.io SDK
         StartAppSDK.init(this, "202843390", true);
+        StartAppAd.disableSplash(); // Disable splash if it causes issues, or keep it. User said ads not showing.
 
         // Request permissions
         requestPermissions();
 
+        // Create Layout
+        RelativeLayout layout = new RelativeLayout(this);
+        layout.setLayoutParams(new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT));
+
         // Create WebView
         webView = new WebView(this);
-        setContentView(webView);
+        RelativeLayout.LayoutParams webViewParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT);
+
+        // Create Banner
+        Banner startAppBanner = new Banner(this);
+        startAppBanner.setId(View.generateViewId());
+        RelativeLayout.LayoutParams bannerParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        bannerParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        bannerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        // Align WebView above Banner
+        webViewParams.addRule(RelativeLayout.ABOVE, startAppBanner.getId());
+
+        // Add views to layout
+        layout.addView(startAppBanner, bannerParams);
+        layout.addView(webView, webViewParams);
+
+        setContentView(layout);
 
         // Configure WebView
         configureWebView();
