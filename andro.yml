@@ -1,0 +1,6 @@
+- title: "Hello World"
+- version: "1"
+- package: "com.example.helloworld"
+- icon: "round.png"
+- web: "html"
+- ads: "202843390"

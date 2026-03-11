@@ -1,0 +1,38 @@
+Baiki error ini:
+D:\Andro>andro.bat
+============================================
+  Andro - Android Build Tool
+============================================
+
+Reading configuration from D:\Andro\andro.yml...
+
+Configuration loaded:
+  Title:   Hello World
+  Version: 1
+  Package: com.example.helloworld
+  Icon:    round.png
+  Web:     html
+  Ads ID:  202843390
+
+Java version: "11.0.30"
+
+Setting up Gradle wrapper...
+Downloading Gradle Wrapper...
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndCurlyBrace
+ 
+'$ProgressPreference' is not recognized as an internal or external command,
+operable program or batch file.
+WARNING: Could not download gradle-wrapper.jar
+Please install Gradle manually or download the wrapper JAR from:
+https://github.com/gradle/gradle/raw/v8.0.0/gradle/wrapper/gradle-wrapper.jar
+
+Generating Android project structure...
+Missing closing ')' in subexpression.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndParenthesisInSubexpression
+ 
+The filename, directory name, or volume label syntax is incorrect.
+
+D:\Andro>
