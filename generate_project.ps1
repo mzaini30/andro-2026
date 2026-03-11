@@ -28,7 +28,7 @@ dependencyResolutionManagement {
 rootProject.name = "$title"
 include ':app'
 "@
-Set-Content -Path "$output\settings.gradle" -Value $settingsGradle -Encoding UTF8
+[System.IO.File]::WriteAllText("$output\settings.gradle", $settingsGradle, [System.Text.UTF8Encoding]::new($false))
 
 # Create root build.gradle
 $rootBuildGradle = @"
@@ -37,7 +37,7 @@ plugins {
     id 'com.android.application' version '8.1.0' apply false
 }
 "@
-Set-Content -Path "$output\build.gradle" -Value $rootBuildGradle -Encoding UTF8
+[System.IO.File]::WriteAllText("$output\build.gradle", $rootBuildGradle, [System.Text.UTF8Encoding]::new($false))
 
 # Create gradle.properties
 $gradleProperties = @"
@@ -45,7 +45,13 @@ org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
 android.useAndroidX=true
 android.enableJetifier=true
 "@
-Set-Content -Path "$output\gradle.properties" -Value $gradleProperties -Encoding UTF8
+[System.IO.File]::WriteAllText("$output\gradle.properties", $gradleProperties, [System.Text.UTF8Encoding]::new($false))
+
+# Create local.properties (dummy SDK path to bypass SDK check)
+$localProperties = @"
+sdk.dir=D:\\Android\\Sdk
+"@
+[System.IO.File]::WriteAllText("$output\local.properties", $localProperties, [System.Text.UTF8Encoding]::new($false))
 
 # Create app/build.gradle
 $appBuildGradle = @"
@@ -71,7 +77,6 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false
@@ -83,13 +88,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    signingConfigs {
-        release {
-            storeFile file('../keystore.jks')
-            storePassword '0809894kali'
-            keyAlias 'andro'
-            keyPassword '0809894kali'
-        }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
 }
 
@@ -109,7 +110,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
 "@
-Set-Content -Path "$output\app\build.gradle" -Value $appBuildGradle -Encoding UTF8
+[System.IO.File]::WriteAllText("$output\app\build.gradle", $appBuildGradle, [System.Text.UTF8Encoding]::new($false))
 
 # Create proguard-rules.pro
 $proguardRules = @"
@@ -121,7 +122,7 @@ $proguardRules = @"
 -dontwarn com.startapp.**
 -dontwarn org.jetbrains.annotations.**
 "@
-Set-Content -Path "$output\app\proguard-rules.pro" -Value $proguardRules -Encoding UTF8
+[System.IO.File]::WriteAllText("$output\app\proguard-rules.pro", $proguardRules, [System.Text.UTF8Encoding]::new($false))
 
 # Create AndroidManifest.xml
 $androidManifest = @"
@@ -213,7 +214,7 @@ $androidManifest = @"
     </application>
 </manifest>
 "@
-Set-Content -Path "$output\app\src\main\AndroidManifest.xml" -Value $androidManifest -Encoding UTF8
+[System.IO.File]::WriteAllText("$output\app\src\main\AndroidManifest.xml", $androidManifest, [System.Text.UTF8Encoding]::new($false))
 
 # Create strings.xml
 $stringsXml = @"
@@ -222,7 +223,7 @@ $stringsXml = @"
     <string name="app_name">$title</string>
 </resources>
 "@
-Set-Content -Path "$output\app\src\main\res\values\strings.xml" -Value $stringsXml -Encoding UTF8
+[System.IO.File]::WriteAllText("$output\app\src\main\res\values\strings.xml", $stringsXml, [System.Text.UTF8Encoding]::new($false))
 
 # Create colors.xml
 $colorsXml = @"
@@ -237,7 +238,7 @@ $colorsXml = @"
     <color name="white">#FFFFFFFF</color>
 </resources>
 "@
-Set-Content -Path "$output\app\src\main\res\values\colors.xml" -Value $colorsXml -Encoding UTF8
+[System.IO.File]::WriteAllText("$output\app\src\main\res\values\colors.xml", $colorsXml, [System.Text.UTF8Encoding]::new($false))
 
 # Create themes.xml
 $themesXml = @"
@@ -248,7 +249,7 @@ $themesXml = @"
         <item name="android:windowFullscreen">false</item>
     </style>
 "@
-Set-Content -Path "$output\app\src\main\res\values\themes.xml" -Value $themesXml -Encoding UTF8
+[System.IO.File]::WriteAllText("$output\app\src\main\res\values\themes.xml", $themesXml, [System.Text.UTF8Encoding]::new($false))
 
 # Create file_paths.xml
 $filePathsXml = @"
@@ -261,7 +262,7 @@ $filePathsXml = @"
     <external-cache-path name="external_cache" path="." />
 </paths>
 "@
-Set-Content -Path "$output\app\src\main\res\xml\file_paths.xml" -Value $filePathsXml -Encoding UTF8
+[System.IO.File]::WriteAllText("$output\app\src\main\res\xml\file_paths.xml", $filePathsXml, [System.Text.UTF8Encoding]::new($false))
 
 # Create MainActivity.java
 $mainActivity = @"

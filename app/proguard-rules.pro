@@ -1,4 +1,4 @@
-﻿# Start.io SDK
+# Start.io SDK
 -keep class com.startapp.** { *; }
 -keep class com.truenet.** { *; }
 -keepattributes Exceptions, InnerClasses, Signature, Deprecated, SourceFile, LineNumberTable, *Annotation*, EnclosingMethod

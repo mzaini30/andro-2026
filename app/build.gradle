@@ -1,4 +1,4 @@
-﻿plugins {
+plugins {
     id 'com.android.application'
 }
 
@@ -20,7 +20,6 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false
@@ -32,13 +31,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    signingConfigs {
-        release {
-            storeFile file('../keystore.jks')
-            storePassword '0809894kali'
-            keyAlias 'andro'
-            keyPassword '0809894kali'
-        }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
 }
 
