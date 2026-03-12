@@ -2,10 +2,16 @@
 setlocal enabledelayedexpansion
 
 :: Andro - Build Android APK and AAB from andro.yml configuration
-:: Usage: andro [build|clean|help]
+:: Usage: andro [build|clean|init|help]
 
 set "SCRIPT_DIR=%~dp0"
 set "CURRENT_DIR=%CD%"
+
+:: Handle 'init' command early (before config search) since it creates new config
+if "%1"=="init" goto :init
+if "%1"=="help" goto :help
+
+:: For other commands, search for existing andro.yml
 set "CONFIG_DIR=%CURRENT_DIR%"
 
 :: Search for andro.yml in current directory and parent directories
@@ -20,6 +26,8 @@ goto :find_config
 :config_not_found
 echo ERROR: Configuration file (andro.yml) not found in current directory or any parent directory.
 echo Current directory: %CURRENT_DIR%
+echo.
+echo Use "andro init" to create a new project configuration.
 exit /b 1
 
 :config_found
@@ -30,8 +38,6 @@ set "SCRIPT_ANDROID_DIR=%SCRIPT_DIR%android"
 if "%1"=="" goto :build
 if "%1"=="build" goto :build
 if "%1"=="clean" goto :clean
-if "%1"=="init" goto :init
-if "%1"=="help" goto :help
 
 echo Unknown command: %1
 echo Use "andro help" for usage information
@@ -52,20 +58,91 @@ echo Configuration file: andro.yml
 goto :eof
 
 :init
-if exist "%CONFIG_FILE%" (
-    echo ERROR: %CONFIG_FILE% already exists.
+echo ============================================
+echo   Andro Init - Create New Project
+echo ============================================
+echo.
+echo Script directory: %SCRIPT_DIR%
+echo Current directory: %CURRENT_DIR%
+echo.
+
+:: Check if andro.yml already exists
+if exist "%CURRENT_DIR%\andro.yml" (
+    echo ERROR: andro.yml already exists in:
+    echo   %CURRENT_DIR%\andro.yml
+    echo.
+    echo Delete it first or choose a different directory.
     exit /b 1
 )
-echo Creating default %CONFIG_FILE%...
+
+:: Test write permission
+echo Testing write permission...
+echo test > "%CURRENT_DIR%\test_write.tmp" 2>nul
+if errorlevel 1 (
+    echo.
+    echo ERROR: Cannot write to current directory!
+    echo   Directory: %CURRENT_DIR%
+    echo.
+    echo Please run from a writable directory.
+    exit /b 1
+)
+del "%CURRENT_DIR%\test_write.tmp" >nul 2>&1
+set errorlevel=0
+echo Write permission: OK
+echo.
+
+:: Create andro.yml
+echo Creating andro.yml...
 (
 echo - title: "My Awesome App"
 echo - version: "1"
 echo - package: "com.example.myapp"
-echo - icon: "image.png"
-echo - web: "build"
+echo - icon: "round.png"
+echo - web: "html"
 echo - ads: "202843390"
-) > "%CONFIG_FILE%"
-echo Done. Edit %CONFIG_FILE% to configure your app.
+) > "%CURRENT_DIR%\andro.yml"
+
+if exist "%CURRENT_DIR%\andro.yml" (
+    echo   Created: %CURRENT_DIR%\andro.yml
+) 
+@REM else (
+@REM     echo.
+@REM     echo ERROR: Failed to create andro.yml!
+@REM     echo   Target: %CURRENT_DIR%\andro.yml
+@REM     echo.
+@REM     echo Possible causes:
+@REM     echo - Path too long (max 260 characters on Windows)
+@REM     echo - Insufficient permissions
+@REM     echo - Disk full
+@REM     exit /b 1
+@REM )
+echo.
+
+:: Copy andro.md if exists
+echo Checking for andro.md...
+echo   Source: %SCRIPT_DIR%\andro.md
+if exist "%SCRIPT_DIR%\andro.md" (
+    echo Copying andro.md...
+    copy /Y "%SCRIPT_DIR%\andro.md" "%CURRENT_DIR%\andro.md"
+    if exist "%CURRENT_DIR%\andro.md" (
+        echo   Copied: %CURRENT_DIR%\andro.md
+    ) else (
+        echo   WARNING: Failed to copy andro.md
+    )
+) else (
+    echo   andro.md not found in %SCRIPT_DIR% (skipping)
+)
+
+echo.
+echo ============================================
+echo   Init Complete!
+echo ============================================
+echo.
+echo Next steps:
+echo   1. Edit andro.yml to configure your app
+echo   2. Copy the android\ folder to this directory
+echo   3. Run "andro build" to build your APK
+echo.
 goto :eof
 
 :clean
