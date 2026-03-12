@@ -4,6 +4,8 @@ param(
     [int]$maxSize = 512
 )
 
+Add-Type -AssemblyName System.Drawing
+
 # Load the image
 try {
     $image = [System.Drawing.Image]::FromFile($inputPath)

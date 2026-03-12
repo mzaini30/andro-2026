@@ -1,4 +1,3 @@
-error:
 
 D:\Aplikasi-Android\learning-kana>andro
 ============================================
@@ -26,7 +25,17 @@ Checking Android SDK licenses...
 Creating license files...
 Licenses accepted.
 Generating Android project structure...
+Created: D:\Aplikasi-Android\learning-kana\android\app\src\main\java\com\mzaini30\learningkana
+Created: D:\Aplikasi-Android\learning-kana\android\app\src\main\res\drawable
+Created: D:\Aplikasi-Android\learning-kana\android\app\src\main\res\values
+Created: D:\Aplikasi-Android\learning-kana\android\app\src\main\assets
+Created: D:\Aplikasi-Android\learning-kana\android\app\src\main\res\mipmap-hdpi
+Created: D:\Aplikasi-Android\learning-kana\android\app\src\main\res\mipmap-mdpi
+Created: D:\Aplikasi-Android\learning-kana\android\app\src\main\res\mipmap-xhdpi
+Created: D:\Aplikasi-Android\learning-kana\android\app\src\main\res\mipmap-xxhdpi
+Created: D:\Aplikasi-Android\learning-kana\android\app\src\main\res\mipmap-xxxhdpi
+Created: D:\Aplikasi-Android\learning-kana\android\app\src\main\res\xml
+All directories created successfully.
 : was unexpected at this time.
 
-aset html nggak tersalin ke project android
-masih error yang sama ketika menjalankan andro
+terhenti di situ. kemungkinan karena ukuran gambar kebesaran
