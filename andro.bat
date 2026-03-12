@@ -149,7 +149,9 @@ if exist "%ICON_SRC%" (
 set "WEB_SRC=%CURRENT_DIR%\%APP_WEB%"
 if exist "%WEB_SRC%" (
     echo Copying web assets from %APP_WEB%...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = '%WEB_SRC%'; $dst = '%ANDROID_DIR%\app\src\main\assets'; Get-ChildItem $src -File | ForEach-Object { Copy-Item $_.FullName $dst -Force }"
+    :: Ensure assets directory exists
+    if not exist "%ANDROID_DIR%\app\src\main\assets" mkdir "%ANDROID_DIR%\app\src\main\assets"
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = '%WEB_SRC%'; $dst = '%ANDROID_DIR%\app\src\main\assets'; Get-ChildItem $src -Recurse -File | ForEach-Object { $relPath = $_.FullName.Substring($src.Length); $destFile = $dst + $relPath; if (!(Test-Path (Split-Path $destFile))) { New-Item -ItemType Directory -Force -Path (Split-Path $destFile) | Out-Null }; Copy-Item $_.FullName $destFile -Force }"
     echo Web assets copied.
 ) else (
     echo WARNING: Web folder not found: %WEB_SRC%
@@ -172,9 +174,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\genera
     -ads "%APP_ADS%" ^
     -output "%ANDROID_DIR%"
 
-:: Update local.properties with actual SDK path if it exists
+:: Update local.properties with actual SDK path (use forward slashes to avoid escaping issues)
 if exist "D:\Android\Sdk" (
-    echo sdk.dir=D:\\Android\\Sdk > "%ANDROID_DIR%\local.properties"
+    echo sdk.dir=D:/Android/Sdk > "%ANDROID_DIR%\local.properties"
+)
+
+:: Copy andro.md to output directory if it exists
+if exist "%SCRIPT_ANDROID_DIR%\..\andro.md" (
+    copy /Y "%SCRIPT_ANDROID_DIR%\..\andro.md" "%CURRENT_DIR%\andro.md" >nul
+    echo andro.md copied to current directory.
 )
 
 :: Build with Gradle
@@ -256,6 +264,10 @@ set "SDK_DIR="
 if exist "%ANDROID_DIR%\local.properties" (
     for /f "tokens=2 delims==" %%a in ('findstr /c:"sdk.dir=" "%ANDROID_DIR%\local.properties"') do set "SDK_DIR=%%a"
 )
+
+:: Trim trailing whitespace and normalize path separators
+if defined SDK_DIR set "SDK_DIR=%SDK_DIR: =%"
+if defined SDK_DIR set "SDK_DIR=%SDK_DIR:/=\\%"
 
 :: Fall back to ANDROID_HOME
 if "%SDK_DIR%"=="" set "SDK_DIR=%ANDROID_HOME%"

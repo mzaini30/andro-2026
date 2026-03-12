@@ -1,80 +1,27 @@
-Kan aku menjalankan andro di D:\Latihan\Tes, muncul error ini:
+Kan aku menjalankan andro di D:\Latihan\Tes, kenapa nggak tersalin di situ file andro.md. Lalu, di android\app\src\main, tidak terbentuk folder assets yang berisi file-file HTML yang aku definisikan sebelumnya?
 
-D:\Latihan\Tes>andro
-============================================
-  Andro - Android Build Tool
-============================================
-
-Reading configuration from D:\Latihan\Tes\andro.yml...
-
-Environment variable The argument 'D:\Latihan\Tes\android\parse_yaml.ps1' to the -File parameter does not exist. Provide the path to an existing '.ps1' file as an argument to the -File parameter. not defined
-Environment variable Windows PowerShell not defined
-Environment variable Copyright (C) Microsoft Corporation. All rights reserved. not defined
-Environment variable Try the new cross-platform PowerShell https://aka.ms/pscore6 not defined
-Configuration loaded:
-  Title:
-  Version:
-  Package:
-  Icon:
-  Web:     
-  Ads ID:  
-
-Java version: "17.0.18"
-
-Setting up Gradle wrapper...
-The system cannot find the path specified.
-
-The system cannot find the batch label specified - accept_sdk_licenses
-Generating Android project structure...
-The argument 'D:\Latihan\Tes\android\create_dirs.ps1' to the -File parameter does not exist. Provide the path to an existing '.ps1' file as an argument to the -File parameter.
-Windows PowerShell
-Copyright (C) Microsoft Corporation. All rights reserved.
-
-Try the new cross-platform PowerShell https://aka.ms/pscore6
-
-Icon copied: 
-Copying web assets from ...
-Web assets copied.
-Generating keystore...
-Generating 2,048 bit RSA key pair and self-signed certificate (SHA256withRSA) with a validity of 10,000 days
-        for: CN=Muhammad Zaini, L=Samarinda, EMAILADDRESS=muhzaini30@gmail.com
-[Storing D:\Latihan\Tes\android\keystore.jks]
-Keystore generated successfully.
-Generating source files...
-The argument 'D:\Latihan\Tes\android\generate_project.ps1' to the -File parameter does not exist. Provide the path to an existing '.ps1' file as an argument to the -File parameter.
-Windows PowerShell
-Copyright (C) Microsoft Corporation. All rights reserved.
-
-Try the new cross-platform PowerShell https://aka.ms/pscore6
-
+Lalu, ada error ini:
 
 ============================================
   Building APK and AAB...
 ============================================
 
-'gradle' is not recognized as an internal or external command,
-operable program or batch file.
+To honour the JVM settings for this build a single-use Daemon process will be forked. See https://docs.gradle.org/8.0/userguide/gradle_daemon.html#sec:disabling_the_daemon.
+Daemon will be stopped at the end of the build 
 
-============================================
-  Build Failed
-============================================
+FAILURE: Build failed with an exception.
 
-Common issues:
-- Java JDK 11+ not installed or not in PATH
-- ANDROID_HOME environment variable not set
-- Android SDK not installed
-- Internet connection required for Gradle downloads
+* What went wrong:
+Could not determine the dependencies of task ':app:minifyReleaseWithR8'.
+> Trailing char < > at index 14: D:\Android\Sdk
 
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
 
-D:\Latihan\Tes>
+* Get more help at https://help.gradle.org
 
-Untuk file konfigurasi itu sudah ada isinya di andro.yml. Kayaknya dia salah membaca pathnya
-Kayaknya file-file .ps1 itu missing dari folder android sehingga nggak bisa dijalankan. Nah, untuk file-file ini karena sifatnya untuk running aja, bisa dijalankan dari D:\Andro tapi untuk mengolah folder saat ini
-
-Untuk error ini:
-Common issues:
-- Java JDK 11+ not installed or not in PATH
-- ANDROID_HOME environment variable not set
-- Android SDK not installed
-- Internet connection required for Gradle downloads
-Gunakan Android SDK yang di D:\Android\Sdk
+BUILD FAILED in 1m 31s
+0 was unexpected at this time.
+Coba kamu cek isi dari D:\Android\Sdk itu sudah tepat apa belum, untuk treenya, cek di ./sdk-tree.txt
