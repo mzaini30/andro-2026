@@ -89,9 +89,9 @@ andro help
 ```
 
 ### Output Files
-- `app/build/outputs/apk/debug/app-debug.apk`
-- `app/build/outputs/apk/release/app-release.apk`
-- `app/build/outputs/bundle/release/app-release.aab`
+- `android/app/build/outputs/apk/debug/app-debug.apk`
+- `android/app/build/outputs/apk/release/app-release.apk`
+- `android/app/build/outputs/bundle/release/app-release.aab`
 
 ## Key Features
 
@@ -135,7 +135,7 @@ Android.vibrate(1000)
 
 ### Signed Releases
 - Auto-generated keystore
-- Stored at `keystore.jks`
+- Stored at `android/keystore.jks`
 - Ready for Google Play
 
 ## Keystore Details
@@ -150,7 +150,7 @@ Android.vibrate(1000)
 | **Key Password** | 0809894kali |
 | **Validity** | 10000 days |
 
-⚠️ **Backup `keystore.jks` securely**—required for all app updates!
+⚠️ **Backup `android/keystore.jks` securely**—required for all app updates!
 
 ## Development Conventions
 
@@ -158,7 +158,7 @@ Android.vibrate(1000)
 - Place HTML/CSS/JS in the `html/` folder (or configured `web` path)
 - Use absolute paths: `<a href="/about.html">`
 - Include viewport meta tag for mobile
-- All assets are copied to `app/src/main/assets/`
+- All assets are copied to `android/app/src/main/assets/`
 
 ### MainActivity Features
 - `configureWebView()` - Sets up WebView with all modern features
@@ -177,15 +177,15 @@ Android.vibrate(1000)
 
 | File | Purpose |
 |------|---------|
-| `andro.bat` | Main build orchestrator |
-| `generate_project.ps1` | Generates Android project structure |
-| `bootstrap-gradle.bat` | Downloads Gradle wrapper JAR |
-| `gradlew.bat` | Gradle wrapper script |
-| `keystore.jks` | Release signing key |
-| `app/build.gradle` | App-level Gradle configuration |
-| `settings.gradle` | Root Gradle settings |
-| `AndroidManifest.xml` | App permissions and configuration |
-| `MainActivity.java` | WebView activity with native features |
+| `andro.bat` | Main build orchestrator (in root) |
+| `android/generate_project.ps1` | Generates Android project structure |
+| `android/bootstrap-gradle.bat` | Downloads Gradle wrapper JAR |
+| `android/gradlew.bat` | Gradle wrapper script |
+| `android/keystore.jks` | Release signing key |
+| `android/app/build.gradle` | App-level Gradle configuration |
+| `android/settings.gradle` | Root Gradle settings |
+| `android/AndroidManifest.xml` | App permissions and configuration |
+| `android/MainActivity.java` | WebView activity with native features |
 
 ## Troubleshooting
 
