@@ -1,1 +1,3 @@
-Ini pakai andro init sudah bisa terbuat andro.yml. Tapi belum terbuat andro.md
+Sekarang, saat init, cari .gitignore di project yang menjalankan andro init, kemudian tambahkan: android (jika belum ada android di .gitignore ya tapi)
+Itu supaya folder android dikecualikan dari Git
+Maksudku, aturnya di ./android/generate_project.ps1, bukan langsung kamu edit ./.gitignore di project ini ya

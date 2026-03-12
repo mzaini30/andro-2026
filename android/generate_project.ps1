@@ -654,4 +654,16 @@ if (!(Test-Path "$output\gradle\wrapper")) {
 }
 [System.IO.File]::WriteAllText("$output\gradle\wrapper\gradle-wrapper.properties", $gradleWrapperProps, [System.Text.UTF8Encoding]::new($false))
 
+# Update .gitignore in project root to exclude android/ folder
+$gitignorePath = Join-Path $output ".." | Join-Path -ChildPath ".gitignore"
+if ([System.IO.File]::Exists($gitignorePath)) {
+    $gitignoreContent = [System.IO.File]::ReadAllText($gitignorePath)
+    # Check if "android/" is already in .gitignore
+    if ($gitignoreContent -notmatch '(?m)^android/$') {
+        # Append android/ to .gitignore
+        [System.IO.File]::AppendAllText($gitignorePath, "`n# Generated Android project`nandroid/", [System.Text.UTF8Encoding]::new($false))
+        Write-Host "Added 'android/' to .gitignore"
+    }
+}
+
 Write-Host "Project files generated successfully."
