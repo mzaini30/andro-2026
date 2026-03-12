@@ -5,8 +5,9 @@ setlocal enabledelayedexpansion
 :: Usage: andro [build|clean|help]
 
 set "SCRIPT_DIR=%~dp0"
-set "ANDROID_DIR=%SCRIPT_DIR%android"
 set "CURRENT_DIR=%CD%"
+set "ANDROID_DIR=%CURRENT_DIR%\android"
+set "SCRIPT_ANDROID_DIR=%SCRIPT_DIR%android"
 set "CONFIG_FILE=%CURRENT_DIR%\andro.yml"
 
 if "%1"=="" goto :build
@@ -43,8 +44,8 @@ echo Creating default %CONFIG_FILE%...
 echo - title: "My Awesome App"
 echo - version: "1"
 echo - package: "com.example.myapp"
-echo - icon: "round.png"
-echo - web: "html"
+echo - icon: "image.png"
+echo - web: "build"
 echo - ads: "202843390"
 ) > "%CONFIG_FILE%"
 echo Done. Edit %CONFIG_FILE% to configure your app.
@@ -77,7 +78,7 @@ echo Reading configuration from %CONFIG_FILE%...
 echo.
 
 :: Parse YAML configuration using PowerShell
-powershell -NoProfile -ExecutionPolicy Bypass -File "%ANDROID_DIR%\parse_yaml.ps1" -configFile "%CONFIG_FILE%" > "%TEMP%\andro_config.tmp"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\parse_yaml.ps1" -configFile "%CONFIG_FILE%" > "%TEMP%\andro_config.tmp"
 
 for /f "delims=" %%i in (%TEMP%\andro_config.tmp) do set "%%i"
 del "%TEMP%\andro_config.tmp"
@@ -107,7 +108,20 @@ echo.
 :: Bootstrap Gradle if needed
 if not exist "%ANDROID_DIR%\gradle\wrapper\gradle-wrapper.jar" (
     echo Setting up Gradle wrapper...
-    call "%ANDROID_DIR%\bootstrap-gradle.bat"
+    
+    :: Create gradle wrapper directory in output folder
+    if not exist "%ANDROID_DIR%\gradle\wrapper" mkdir "%ANDROID_DIR%\gradle\wrapper"
+    
+    :: Copy gradlew.bat to output directory
+    copy /Y "%SCRIPT_ANDROID_DIR%\gradlew.bat" "%ANDROID_DIR%\gradlew.bat" >nul
+    
+    :: Copy gradle-wrapper.properties to output directory
+    copy /Y "%SCRIPT_ANDROID_DIR%\gradle\wrapper\gradle-wrapper.properties" "%ANDROID_DIR%\gradle\wrapper\gradle-wrapper.properties" >nul
+    
+    :: Download gradle-wrapper.jar directly to output directory
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/gradle/gradle/v8.0.0/gradle/wrapper/gradle-wrapper.jar' -OutFile '%ANDROID_DIR%\gradle\wrapper\gradle-wrapper.jar' -UseBasicParsing"
+    
+    echo Gradle wrapper setup complete.
     echo.
 )
 
@@ -118,7 +132,7 @@ call :accept_sdk_licenses
 echo Generating Android project structure...
 
 :: Create directories using PowerShell
-powershell -NoProfile -ExecutionPolicy Bypass -File "%ANDROID_DIR%\create_dirs.ps1" ^
+powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\create_dirs.ps1" ^
     -scriptDir "%ANDROID_DIR%" ^
     -appPackage "%APP_PACKAGE%"
 
@@ -151,12 +165,17 @@ if not exist "%ANDROID_DIR%\keystore.jks" (
 
 :: Generate source files using PowerShell
 echo Generating source files...
-powershell -NoProfile -ExecutionPolicy Bypass -File "%ANDROID_DIR%\generate_project.ps1" ^
+powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\generate_project.ps1" ^
     -title "%APP_TITLE%" ^
     -version "%APP_VERSION%" ^
     -package "%APP_PACKAGE%" ^
     -ads "%APP_ADS%" ^
     -output "%ANDROID_DIR%"
+
+:: Update local.properties with actual SDK path if it exists
+if exist "D:\Android\Sdk" (
+    echo sdk.dir=D:\\Android\\Sdk > "%ANDROID_DIR%\local.properties"
+)
 
 :: Build with Gradle
 echo.
@@ -206,7 +225,7 @@ if exist "%ANDROID_DIR%\app\build\outputs\bundle\release\app-release.aab" (
 )
 echo.
 
-cd /d "%SCRIPT_DIR%"
+cd /d "%CURRENT_DIR%"
 goto :eof
 
 :generate_keystore
@@ -254,39 +273,16 @@ if not exist "%SDK_DIR%" (
     goto :eof
 )
 
-:: Find sdkmanager
-set "SDKMANAGER="
-if exist "%SDK_DIR%\cmdline-tools\latest\bin\sdkmanager.bat" (
-    set "SDKMANAGER=%SDK_DIR%\cmdline-tools\latest\bin\sdkmanager.bat"
-) else if exist "%SDK_DIR%\tools\bin\sdkmanager.bat" (
-    set "SDKMANAGER=%SDK_DIR%\tools\bin\sdkmanager.bat"
-)
-
-if "%SDKMANAGER%"=="" (
-    echo WARNING: sdkmanager not found. Skipping license acceptance.
-    goto :eof
-)
-
-echo Found SDK: %SDK_DIR%
-@REM echo Creating license files...
-
 :: Create licenses directory
-@REM set "LICENSES_DIR=%SDK_DIR%\licenses"
-@REM if not exist "%LICENSES_DIR%" mkdir "%LICENSES_DIR%"
+set "LICENSES_DIR=%SDK_DIR%\licenses"
+if not exist "%LICENSES_DIR%" mkdir "%LICENSES_DIR%"
 
-:: Accept all licenses using sdkmanager
-@REM echo Accepting licenses via sdkmanager...
-@REM echo y | "%SDKMANAGER%" --sdk_root="%SDK_DIR%" --licenses >nul 2>&1
-
-:: Install required SDK packages
-@REM echo Installing required SDK packages...
-@REM "%SDKMANAGER%" --sdk_root="%SDK_DIR%" --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "build-tools;33.0.1" >nul 2>&1
-
-:: Also create license files directly (backup method)
+:: Create license files directly
+echo Creating license files...
 echo 24333f8a63b6825ea9c5514f83c2829b004d1fee > "%LICENSES_DIR%\android-sdk-license"
 echo 8933bad161af4178b1185d1a37fbf41ea5269c55 >> "%LICENSES_DIR%\android-sdk-license"
 echo d56f5187479451eabf01fb78af6dfcb131a6481e >> "%LICENSES_DIR%\android-sdk-license"
 echo 24333f8a63b6825ea9c5514f83c2829b004d1fee >> "%LICENSES_DIR%\android-sdk-license"
 
-echo Licenses accepted and packages installed.
+echo Licenses accepted.
 goto :eof

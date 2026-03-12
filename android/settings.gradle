@@ -13,5 +13,5 @@ dependencyResolutionManagement {
         maven { url 'https://s3.amazonaws.com/startapp/' }
     }
 }
-rootProject.name = "Hello World"
+rootProject.name = "My Awesome App"
 include ':app'
