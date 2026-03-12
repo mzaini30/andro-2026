@@ -98,8 +98,8 @@ echo - title: "My Awesome App"
 echo - version: "1"
 echo - package: "com.example.myapp"
 echo - icon: "round.png"
-echo - web: "html"
-echo - ads: "202843390"
+echo - web: "build"
+echo - ads: ""
 ) > "%CURRENT_DIR%\andro.yml"
 
 if exist "%CURRENT_DIR%\andro.yml" (
