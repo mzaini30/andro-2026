@@ -94,10 +94,10 @@ echo.
 :: Create andro.yml
 echo Creating andro.yml...
 (
-echo - title: "My Awesome App"
+echo - title: ""
 echo - version: "1"
-echo - package: "com.example.myapp"
-echo - icon: "round.png"
+echo - package: "com.mzaini30."
+echo - icon: ""
 echo - web: "build"
 echo - ads: ""
 ) > "%CURRENT_DIR%\andro.yml"
