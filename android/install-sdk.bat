@@ -29,7 +29,7 @@ echo Installing SDK components (this may take a while)...
 
 echo.
 echo Updating local.properties...
-echo sdk.dir=%SDK_ROOT% > "%SCRIPT_DIR%local.properties"
+echo sdk.dir=%SDK_ROOT%> "%SCRIPT_DIR%local.properties"
 
 echo.
 echo ============================================

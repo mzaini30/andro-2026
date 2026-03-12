@@ -6,9 +6,26 @@ setlocal enabledelayedexpansion
 
 set "SCRIPT_DIR=%~dp0"
 set "CURRENT_DIR=%CD%"
-set "ANDROID_DIR=%CURRENT_DIR%\android"
+set "CONFIG_DIR=%CURRENT_DIR%"
+
+:: Search for andro.yml in current directory and parent directories
+:find_config
+set "CONFIG_FILE=%CONFIG_DIR%\andro.yml"
+if exist "%CONFIG_FILE%" goto :config_found
+set "PARENT_DIR=%CONFIG_DIR%\.."
+if /i "%PARENT_DIR%"=="%CONFIG_DIR%" goto :config_not_found
+set "CONFIG_DIR=%PARENT_DIR%"
+goto :find_config
+
+:config_not_found
+echo ERROR: Configuration file (andro.yml) not found in current directory or any parent directory.
+echo Current directory: %CURRENT_DIR%
+exit /b 1
+
+:config_found
+:: Set ANDROID_DIR relative to where andro.yml was found
+set "ANDROID_DIR=%CONFIG_DIR%\android"
 set "SCRIPT_ANDROID_DIR=%SCRIPT_DIR%android"
-set "CONFIG_FILE=%CURRENT_DIR%\andro.yml"
 
 if "%1"=="" goto :build
 if "%1"=="build" goto :build
@@ -53,12 +70,12 @@ goto :eof
 
 :clean
 echo Cleaning build artifacts...
-if exist "%CURRENT_DIR%\android\build" rmdir /s /q "%CURRENT_DIR%\android\build"
-if exist "%CURRENT_DIR%\android\app\build" rmdir /s /q "%CURRENT_DIR%\android\app\build"
-if exist "%CURRENT_DIR%\android\.gradle" rmdir /s /q "%CURRENT_DIR%\android\.gradle"
-if exist "%CURRENT_DIR%\android\app" rmdir /s /q "%CURRENT_DIR%\android\app"
-if exist "%CURRENT_DIR%\android\gradle" rmdir /s /q "%CURRENT_DIR%\android\gradle"
-if exist "%CURRENT_DIR%\android\local.properties" del /q "%CURRENT_DIR%\android\local.properties"
+if exist "%CONFIG_DIR%\android\build" rmdir /s /q "%CONFIG_DIR%\android\build"
+if exist "%CONFIG_DIR%\android\app\build" rmdir /s /q "%CONFIG_DIR%\android\app\build"
+if exist "%CONFIG_DIR%\android\.gradle" rmdir /s /q "%CONFIG_DIR%\android\.gradle"
+if exist "%CONFIG_DIR%\android\app" rmdir /s /q "%CONFIG_DIR%\android\app"
+if exist "%CONFIG_DIR%\android\gradle" rmdir /s /q "%CONFIG_DIR%\android\gradle"
+if exist "%CONFIG_DIR%\android\local.properties" del /q "%CONFIG_DIR%\android\local.properties"
 echo Clean complete.
 goto :eof
 
@@ -136,8 +153,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\create
     -scriptDir "%ANDROID_DIR%" ^
     -appPackage "%APP_PACKAGE%"
 
-:: Copy icon (resolve path relative to current directory)
-set "ICON_SRC=%CURRENT_DIR%\%APP_ICON%"
+:: Copy icon (resolve path relative to config directory)
+set "ICON_SRC=%CONFIG_DIR%\%APP_ICON%"
 if exist "%ICON_SRC%" (
     powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = '%ICON_SRC%'; $dst = '%ANDROID_DIR%\app\src\main\res\drawable\ic_launcher.png'; Copy-Item $src $dst -Force"
     echo Icon copied: %APP_ICON%
@@ -145,8 +162,8 @@ if exist "%ICON_SRC%" (
     echo WARNING: Icon file not found: %ICON_SRC%
 )
 
-:: Copy web assets (resolve path relative to current directory)
-set "WEB_SRC=%CURRENT_DIR%\%APP_WEB%"
+:: Copy web assets (resolve path relative to config directory)
+set "WEB_SRC=%CONFIG_DIR%\%APP_WEB%"
 if exist "%WEB_SRC%" (
     echo Copying web assets from %APP_WEB%...
     :: Ensure assets directory exists
@@ -176,13 +193,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\genera
 
 :: Update local.properties with actual SDK path (use forward slashes to avoid escaping issues)
 if exist "D:\Android\Sdk" (
-    echo sdk.dir=D:/Android/Sdk > "%ANDROID_DIR%\local.properties"
+    echo sdk.dir=D:/Android/Sdk> "%ANDROID_DIR%\local.properties"
 )
 
 :: Copy andro.md to output directory if it exists
 if exist "%SCRIPT_ANDROID_DIR%\..\andro.md" (
-    copy /Y "%SCRIPT_ANDROID_DIR%\..\andro.md" "%CURRENT_DIR%\andro.md" >nul
-    echo andro.md copied to current directory.
+    copy /Y "%SCRIPT_ANDROID_DIR%\..\andro.md" "%CONFIG_DIR%\andro.md" >nul
+    echo andro.md copied to %CONFIG_DIR%.
 )
 
 :: Build with Gradle
@@ -233,7 +250,7 @@ if exist "%ANDROID_DIR%\app\build\outputs\bundle\release\app-release.aab" (
 )
 echo.
 
-cd /d "%CURRENT_DIR%"
+cd /d "%CONFIG_DIR%"
 goto :eof
 
 :generate_keystore
@@ -266,8 +283,10 @@ if exist "%ANDROID_DIR%\local.properties" (
 )
 
 :: Trim trailing whitespace and normalize path separators
-if defined SDK_DIR set "SDK_DIR=%SDK_DIR: =%"
-if defined SDK_DIR set "SDK_DIR=%SDK_DIR:/=\\%"
+if defined SDK_DIR (
+    call :trim_string "SDK_DIR"
+    set "SDK_DIR=%SDK_DIR:/=\%"
+)
 
 :: Fall back to ANDROID_HOME
 if "%SDK_DIR%"=="" set "SDK_DIR=%ANDROID_HOME%"
@@ -297,4 +316,16 @@ echo d56f5187479451eabf01fb78af6dfcb131a6481e >> "%LICENSES_DIR%\android-sdk-lic
 echo 24333f8a63b6825ea9c5514f83c2829b004d1fee >> "%LICENSES_DIR%\android-sdk-license"
 
 echo Licenses accepted.
+goto :eof
+
+:trim_string
+:: Helper function to trim leading/trailing whitespace from a variable
+setlocal enabledelayedexpansion
+set "varName=%~1"
+set "varValue=!%varName%!"
+:trim_lead
+if "!varValue:~0,1!"==" " set "varValue=!varValue:~1!" & goto trim_lead
+:trim_trail
+if "!varValue:~-1!"==" " set "varValue=!varValue:~0,-1!" & goto trim_trail
+endlocal & set "%varName%=%varValue%"
 goto :eof

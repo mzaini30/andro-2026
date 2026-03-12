@@ -18,6 +18,12 @@ if exist "%SCRIPT_DIR%local.properties" (
     for /f "tokens=2 delims==" %%a in ('findstr /c:"sdk.dir=" "%SCRIPT_DIR%local.properties"') do set "SDK_DIR=%%a"
 )
 
+:: Trim trailing whitespace
+if defined SDK_DIR (
+    call :trim_string "SDK_DIR"
+    set "SDK_DIR=%SDK_DIR:/=\%"
+)
+
 :: Fall back to ANDROID_HOME
 if "%SDK_DIR%"=="" set "SDK_DIR=%ANDROID_HOME%"
 
@@ -74,3 +80,17 @@ echo.
 echo You can now run: andro build
 echo.
 pause
+
+goto :eof
+
+:trim_string
+:: Helper function to trim leading/trailing whitespace from a variable
+setlocal enabledelayedexpansion
+set "varName=%~1"
+set "varValue=!%varName%!"
+:trim_lead
+if "!varValue:~0,1!"==" " set "varValue=!varValue:~1!" & goto trim_lead
+:trim_trail
+if "!varValue:~-1!"==" " set "varValue=!varValue:~0,-1!" & goto trim_trail
+endlocal & set "%varName%=%varValue%"
+goto :eof

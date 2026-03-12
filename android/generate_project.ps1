@@ -50,9 +50,7 @@ android.suppressUnsupportedCompileSdk=34
 [System.IO.File]::WriteAllText("$output\gradle.properties", $gradleProperties, [System.Text.UTF8Encoding]::new($false))
 
 # Create local.properties (dummy SDK path to bypass SDK check)
-$localProperties = @"
-sdk.dir=D:/Android/Sdk
-"@
+$localProperties = "sdk.dir=D:/Android/Sdk"
 [System.IO.File]::WriteAllText("$output\local.properties", $localProperties, [System.Text.UTF8Encoding]::new($false))
 
 # Create app/build.gradle
