@@ -1,3 +1,42 @@
-Sekarang, saat init, cari .gitignore di project yang menjalankan andro init, kemudian tambahkan: android (jika belum ada android di .gitignore ya tapi)
-Itu supaya folder android dikecualikan dari Git
-Maksudku, aturnya di ./android/generate_project.ps1, bukan langsung kamu edit ./.gitignore di project ini ya
+Error saat menjalankan andro:
+
+Checking Android SDK licenses...
+
+Creating license files...
+Licenses accepted.
+Generating Android project structure...
+Icon copied: icon.jpg
+Copying web assets from build...
+Copy-Item : Could not find a part of the path 'D:\Aplikasi-Android\learning-kana\android\app\src\main\assets\_app\env.js'.
+At line:1 char:373
++ ... ath $destFile) | Out-Null }; Copy-Item $_.FullName $destFile -Force }
++                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Copy-Item], DirectoryNotFoundException
+    + FullyQualifiedErrorId : System.IO.DirectoryNotFoundException,Microsoft.PowerShell.Commands.CopyItemCommand
+ 
+Copy-Item : Could not find a part of the path 'D:\Aplikasi-Android\learning-kana\android\app\src\main\assets\_app\version.json'.
+At line:1 char:373
++ ... ath $destFile) | Out-Null }; Copy-Item $_.FullName $destFile -Force }
++                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Copy-Item], DirectoryNotFoundException
+    + FullyQualifiedErrorId : System.IO.DirectoryNotFoundException,Microsoft.PowerShell.Commands.CopyItemCommand
+ 
+Copy-Item : Could not find a part of the path 'D:\Aplikasi-Android\learning-kana\android\app\src\main\assets\_app\immutable\assets\0.DRRIim9U.css'.
+At line:1 char:373
++ ... ath $destFile) | Out-Null }; Copy-Item $_.FullName $destFile -Force }
++                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Copy-Item], DirectoryNotFoundException
+    + FullyQualifiedErrorId : System.IO.DirectoryNotFoundException,Microsoft.PowerShell.Commands.CopyItemCommand
+ 
+ Error ini juga:
+ > Task :app:mergeReleaseResources FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:mergeReleaseResources'.
+> A failure occurred while executing com.android.build.gradle.internal.res.Aapt2CompileRunnable
+   > Android resource compilation failed
+     ERROR: D:\Aplikasi-Android\learning-kana\android\app\src\main\res\drawable\ic_launcher.png: AAPT: error: file failed to compile.
+
+Apa karena ukurannya yang 960x960 px? Harusnya kamu buatkan tools untuk auto resize juga kalau misalnya kebesaran ukuran pxnya

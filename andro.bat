@@ -233,8 +233,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\create
 :: Copy icon (resolve path relative to config directory)
 set "ICON_SRC=%CONFIG_DIR%\%APP_ICON%"
 if exist "%ICON_SRC%" (
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = '%ICON_SRC%'; $dst = '%ANDROID_DIR%\app\src\main\res\drawable\ic_launcher.png'; Copy-Item $src $dst -Force"
-    echo Icon copied: %APP_ICON%
+    echo Resizing icon (if needed): %APP_ICON%
+    powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\resize_icon.ps1" ^
+        -inputPath "%ICON_SRC%" ^
+        -outputPath "%ANDROID_DIR%\app\src\main\res\drawable\ic_launcher.png" ^
+        -maxSize 512
+    echo Icon processed: %APP_ICON%
 ) else (
     echo WARNING: Icon file not found: %ICON_SRC%
 )
@@ -248,7 +252,12 @@ if exist "%WEB_SRC%" (
     powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = '%WEB_SRC%'; $dst = '%ANDROID_DIR%\app\src\main\assets'; Get-ChildItem $src -Recurse -File | ForEach-Object { $relPath = $_.FullName.Substring($src.Length); $destFile = $dst + $relPath; if (!(Test-Path (Split-Path $destFile))) { New-Item -ItemType Directory -Force -Path (Split-Path $destFile) | Out-Null }; Copy-Item $_.FullName $destFile -Force }"
     echo Web assets copied.
 ) else (
-    echo WARNING: Web folder not found: %WEB_SRC%
+    echo ERROR: Web folder not found: %WEB_SRC%
+    echo.
+    echo Please ensure the 'web' path in andro.yml points to a valid folder.
+    echo Current web path: %APP_WEB%
+    echo Expected location: %WEB_SRC%
+    exit /b 1
 )
 
 :: Generate keystore if not exists (in android directory)
