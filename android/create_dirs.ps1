@@ -6,7 +6,10 @@ param(
 # Convert package name to path (e.g., com.example.helloworld -> com\example\helloworld)
 $packagePath = $appPackage -replace '\.', '\'
 
-# Create directories
+# Use Resolve-Path to get absolute paths and ensure they work
+$scriptDir = $scriptDir.TrimEnd('\')
+
+# Create directories using absolute paths
 $dirs = @(
     "$scriptDir\app\src\main\java\$packagePath",
     "$scriptDir\app\src\main\res\drawable",
@@ -21,5 +24,13 @@ $dirs = @(
 )
 
 foreach ($dir in $dirs) {
-    New-Item -ItemType Directory -Force -Path $dir | Out-Null
+    try {
+        New-Item -ItemType Directory -Force -Path $dir -ErrorAction Stop | Out-Null
+        Write-Host "Created: $dir"
+    } catch {
+        Write-Error "Failed to create directory: $dir - $_"
+        exit 1
+    }
 }
+
+Write-Host "All directories created successfully."

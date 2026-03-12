@@ -11,10 +11,9 @@ set "CURRENT_DIR=%CD%"
 if "%1"=="init" goto :init
 if "%1"=="help" goto :help
 
-:: For other commands, search for existing andro.yml
+:: For other commands, search for andro.yml in current directory and parent directories
 set "CONFIG_DIR=%CURRENT_DIR%"
 
-:: Search for andro.yml in current directory and parent directories
 :find_config
 set "CONFIG_FILE=%CONFIG_DIR%\andro.yml"
 if exist "%CONFIG_FILE%" goto :config_found
@@ -104,18 +103,7 @@ echo - ads: ""
 
 if exist "%CURRENT_DIR%\andro.yml" (
     echo   Created: %CURRENT_DIR%\andro.yml
-) 
-@REM else (
-@REM     echo.
-@REM     echo ERROR: Failed to create andro.yml!
-@REM     echo   Target: %CURRENT_DIR%\andro.yml
-@REM     echo.
-@REM     echo Possible causes:
-@REM     echo - Path too long (max 260 characters on Windows)
-@REM     echo - Insufficient permissions
-@REM     echo - Disk full
-@REM     exit /b 1
-@REM )
+)
 echo.
 
 :: Copy andro.md if exists
@@ -202,19 +190,19 @@ echo.
 :: Bootstrap Gradle if needed
 if not exist "%ANDROID_DIR%\gradle\wrapper\gradle-wrapper.jar" (
     echo Setting up Gradle wrapper...
-    
+
     :: Create gradle wrapper directory in output folder
     if not exist "%ANDROID_DIR%\gradle\wrapper" mkdir "%ANDROID_DIR%\gradle\wrapper"
-    
+
     :: Copy gradlew.bat to output directory
     copy /Y "%SCRIPT_ANDROID_DIR%\gradlew.bat" "%ANDROID_DIR%\gradlew.bat" >nul
-    
+
     :: Copy gradle-wrapper.properties to output directory
     copy /Y "%SCRIPT_ANDROID_DIR%\gradle\wrapper\gradle-wrapper.properties" "%ANDROID_DIR%\gradle\wrapper\gradle-wrapper.properties" >nul
-    
+
     :: Download gradle-wrapper.jar directly to output directory
     powershell -NoProfile -ExecutionPolicy Bypass -Command "$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/gradle/gradle/v8.0.0/gradle/wrapper/gradle-wrapper.jar' -OutFile '%ANDROID_DIR%\gradle\wrapper\gradle-wrapper.jar' -UseBasicParsing"
-    
+
     echo Gradle wrapper setup complete.
     echo.
 )
@@ -225,10 +213,18 @@ call :accept_sdk_licenses
 :: Generate project structure
 echo Generating Android project structure...
 
-:: Create directories using PowerShell
+:: Create directories using PowerShell (pass scriptDir without trailing backslash)
+set "SCRIPT_DIR_PARAM=%ANDROID_DIR%"
+if "%SCRIPT_DIR_PARAM:~-1%"=="\" set "SCRIPT_DIR_PARAM=%SCRIPT_DIR_PARAM:~0,-1%"
+
 powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\create_dirs.ps1" ^
-    -scriptDir "%ANDROID_DIR%" ^
+    -scriptDir "%SCRIPT_DIR_PARAM%" ^
     -appPackage "%APP_PACKAGE%"
+
+if errorlevel 1 (
+    echo ERROR: Failed to create directory structure.
+    exit /b 1
+)
 
 :: Copy icon (resolve path relative to config directory)
 set "ICON_SRC=%CONFIG_DIR%\%APP_ICON%"
@@ -237,8 +233,12 @@ if exist "%ICON_SRC%" (
     powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\resize_icon.ps1" ^
         -inputPath "%ICON_SRC%" ^
         -outputPath "%ANDROID_DIR%\app\src\main\res\drawable\ic_launcher.png" ^
-        -maxSize 512
-    echo Icon processed: %APP_ICON%
+        -maxSize "512"
+    if errorlevel 1 (
+        echo WARNING: Icon processing failed.
+    ) else (
+        echo Icon processed: %APP_ICON%
+    )
 ) else (
     echo WARNING: Icon file not found: %ICON_SRC%
 )
@@ -249,7 +249,13 @@ if exist "%WEB_SRC%" (
     echo Copying web assets from %APP_WEB%...
     :: Ensure assets directory exists
     if not exist "%ANDROID_DIR%\app\src\main\assets" mkdir "%ANDROID_DIR%\app\src\main\assets"
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = '%WEB_SRC%'; $dst = '%ANDROID_DIR%\app\src\main\assets'; Get-ChildItem $src -Recurse -File | ForEach-Object { $relPath = $_.FullName.Substring($src.Length); $destFile = $dst + $relPath; if (!(Test-Path (Split-Path $destFile))) { New-Item -ItemType Directory -Force -Path (Split-Path $destFile) | Out-Null }; Copy-Item $_.FullName $destFile -Force }"
+    powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\copy_assets.ps1" ^
+        -sourcePath "%WEB_SRC%" ^
+        -destPath "%ANDROID_DIR%\app\src\main\assets"
+    if errorlevel 1 (
+        echo ERROR: Failed to copy web assets.
+        exit /b 1
+    )
     echo Web assets copied.
 ) else (
     echo ERROR: Web folder not found: %WEB_SRC%
@@ -276,6 +282,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\genera
     -package "%APP_PACKAGE%" ^
     -ads "%APP_ADS%" ^
     -output "%ANDROID_DIR%"
+
+if errorlevel 1 (
+    echo ERROR: Failed to generate source files.
+    exit /b 1
+)
 
 :: Update local.properties with actual SDK path (use forward slashes to avoid escaping issues)
 if exist "D:\Android\Sdk" (
