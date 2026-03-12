@@ -5,7 +5,9 @@ setlocal enabledelayedexpansion
 :: Usage: andro [build|clean|help]
 
 set "SCRIPT_DIR=%~dp0"
-set "CONFIG_FILE=%SCRIPT_DIR%andro.yml"
+set "ANDROID_DIR=%SCRIPT_DIR%android"
+set "CURRENT_DIR=%CD%"
+set "CONFIG_FILE=%CURRENT_DIR%\andro.yml"
 
 if "%1"=="" goto :build
 if "%1"=="build" goto :build
@@ -50,9 +52,12 @@ goto :eof
 
 :clean
 echo Cleaning build artifacts...
-if exist "%SCRIPT_DIR%build" rmdir /s /q "%SCRIPT_DIR%build"
-if exist "%SCRIPT_DIR%app\build" rmdir /s /q "%SCRIPT_DIR%app\build"
-if exist "%SCRIPT_DIR%.gradle" rmdir /s /q "%SCRIPT_DIR%.gradle"
+if exist "%CURRENT_DIR%\android\build" rmdir /s /q "%CURRENT_DIR%\android\build"
+if exist "%CURRENT_DIR%\android\app\build" rmdir /s /q "%CURRENT_DIR%\android\app\build"
+if exist "%CURRENT_DIR%\android\.gradle" rmdir /s /q "%CURRENT_DIR%\android\.gradle"
+if exist "%CURRENT_DIR%\android\app" rmdir /s /q "%CURRENT_DIR%\android\app"
+if exist "%CURRENT_DIR%\android\gradle" rmdir /s /q "%CURRENT_DIR%\android\gradle"
+if exist "%CURRENT_DIR%\android\local.properties" del /q "%CURRENT_DIR%\android\local.properties"
 echo Clean complete.
 goto :eof
 
@@ -72,7 +77,7 @@ echo Reading configuration from %CONFIG_FILE%...
 echo.
 
 :: Parse YAML configuration using PowerShell
-powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%parse_yaml.ps1" -configFile "%CONFIG_FILE%" > "%TEMP%\andro_config.tmp"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%ANDROID_DIR%\parse_yaml.ps1" -configFile "%CONFIG_FILE%" > "%TEMP%\andro_config.tmp"
 
 for /f "delims=" %%i in (%TEMP%\andro_config.tmp) do set "%%i"
 del "%TEMP%\andro_config.tmp"
@@ -100,9 +105,9 @@ echo Java version: %JAVA_VERSION%
 echo.
 
 :: Bootstrap Gradle if needed
-if not exist "%SCRIPT_DIR%gradle\wrapper\gradle-wrapper.jar" (
+if not exist "%ANDROID_DIR%\gradle\wrapper\gradle-wrapper.jar" (
     echo Setting up Gradle wrapper...
-    call "%SCRIPT_DIR%bootstrap-gradle.bat"
+    call "%ANDROID_DIR%\bootstrap-gradle.bat"
     echo.
 )
 
@@ -113,29 +118,31 @@ call :accept_sdk_licenses
 echo Generating Android project structure...
 
 :: Create directories using PowerShell
-powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%create_dirs.ps1" ^
-    -scriptDir "%SCRIPT_DIR:~0,-1%" ^
+powershell -NoProfile -ExecutionPolicy Bypass -File "%ANDROID_DIR%\create_dirs.ps1" ^
+    -scriptDir "%ANDROID_DIR%" ^
     -appPackage "%APP_PACKAGE%"
 
-:: Copy icon
-if exist "%SCRIPT_DIR%%APP_ICON%" (
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = '%SCRIPT_DIR:~0,-1%\%APP_ICON%'; $dst = '%SCRIPT_DIR:~0,-1%\app\src\main\res\drawable\ic_launcher.png'; Copy-Item $src $dst -Force"
+:: Copy icon (resolve path relative to current directory)
+set "ICON_SRC=%CURRENT_DIR%\%APP_ICON%"
+if exist "%ICON_SRC%" (
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = '%ICON_SRC%'; $dst = '%ANDROID_DIR%\app\src\main\res\drawable\ic_launcher.png'; Copy-Item $src $dst -Force"
     echo Icon copied: %APP_ICON%
 ) else (
-    echo WARNING: Icon file not found: %APP_ICON%
+    echo WARNING: Icon file not found: %ICON_SRC%
 )
 
-:: Copy web assets
-if exist "%SCRIPT_DIR%%APP_WEB%" (
+:: Copy web assets (resolve path relative to current directory)
+set "WEB_SRC=%CURRENT_DIR%\%APP_WEB%"
+if exist "%WEB_SRC%" (
     echo Copying web assets from %APP_WEB%...
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = '%SCRIPT_DIR:~0,-1%\%APP_WEB%'; $dst = '%SCRIPT_DIR:~0,-1%\app\src\main\assets'; Get-ChildItem $src -File | ForEach-Object { Copy-Item $_.FullName $dst -Force }"
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "$src = '%WEB_SRC%'; $dst = '%ANDROID_DIR%\app\src\main\assets'; Get-ChildItem $src -File | ForEach-Object { Copy-Item $_.FullName $dst -Force }"
     echo Web assets copied.
 ) else (
-    echo WARNING: Web folder not found: %APP_WEB%
+    echo WARNING: Web folder not found: %WEB_SRC%
 )
 
-:: Generate keystore if not exists
-if not exist "%SCRIPT_DIR%keystore.jks" (
+:: Generate keystore if not exists (in android directory)
+if not exist "%ANDROID_DIR%\keystore.jks" (
     echo Generating keystore...
     call :generate_keystore
 ) else (
@@ -144,12 +151,12 @@ if not exist "%SCRIPT_DIR%keystore.jks" (
 
 :: Generate source files using PowerShell
 echo Generating source files...
-powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%generate_project.ps1" ^
+powershell -NoProfile -ExecutionPolicy Bypass -File "%ANDROID_DIR%\generate_project.ps1" ^
     -title "%APP_TITLE%" ^
     -version "%APP_VERSION%" ^
     -package "%APP_PACKAGE%" ^
     -ads "%APP_ADS%" ^
-    -output "%SCRIPT_DIR:~0,-1%"
+    -output "%ANDROID_DIR%"
 
 :: Build with Gradle
 echo.
@@ -158,11 +165,11 @@ echo   Building APK and AAB...
 echo ============================================
 echo.
 
-cd /d "%SCRIPT_DIR%"
+cd /d "%ANDROID_DIR%"
 
 :: Run Gradle build
-if exist "%SCRIPT_DIR%gradlew.bat" (
-    call "%SCRIPT_DIR%gradlew.bat" assembleRelease assembleDebug bundleRelease --no-daemon
+if exist "%ANDROID_DIR%\gradlew.bat" (
+    call "%ANDROID_DIR%\gradlew.bat" assembleRelease assembleDebug bundleRelease --no-daemon
 ) else (
     gradle assembleRelease assembleDebug bundleRelease --no-daemon
 )
@@ -188,22 +195,23 @@ echo   Build Complete!
 echo ============================================
 echo.
 echo Output files:
-if exist "%SCRIPT_DIR%app\build\outputs\apk\debug\app-debug.apk" (
-    echo   APK (Debug):  %SCRIPT_DIR%app\build\outputs\apk\debug\app-debug.apk
+if exist "%ANDROID_DIR%\app\build\outputs\apk\debug\app-debug.apk" (
+    echo   APK (Debug):  %ANDROID_DIR%\app\build\outputs\apk\debug\app-debug.apk
 )
-if exist "%SCRIPT_DIR%app\build\outputs\apk\release\app-release.apk" (
-    echo   APK (Release): %SCRIPT_DIR%app\build\outputs\apk\release\app-release.apk
+if exist "%ANDROID_DIR%\app\build\outputs\apk\release\app-release.apk" (
+    echo   APK (Release): %ANDROID_DIR%\app\build\outputs\apk\release\app-release.apk
 )
-if exist "%SCRIPT_DIR%app\build\outputs\bundle\release\app-release.aab" (
-    echo   AAB (Release): %SCRIPT_DIR%app\build\outputs\bundle\release\app-release.aab
+if exist "%ANDROID_DIR%\app\build\outputs\bundle\release\app-release.aab" (
+    echo   AAB (Release): %ANDROID_DIR%\app\build\outputs\bundle\release\app-release.aab
 )
 echo.
 
+cd /d "%SCRIPT_DIR%"
 goto :eof
 
 :generate_keystore
 keytool -genkey -v ^
-    -keystore "%SCRIPT_DIR%keystore.jks" ^
+    -keystore "%ANDROID_DIR%\keystore.jks" ^
     -keyalg RSA ^
     -keysize 2048 ^
     -validity 10000 ^
@@ -226,8 +234,8 @@ echo.
 
 :: Try to get SDK path from local.properties first
 set "SDK_DIR="
-if exist "%SCRIPT_DIR%local.properties" (
-    for /f "tokens=2 delims==" %%a in ('findstr /c:"sdk.dir=" "%SCRIPT_DIR%local.properties"') do set "SDK_DIR=%%a"
+if exist "%ANDROID_DIR%\local.properties" (
+    for /f "tokens=2 delims==" %%a in ('findstr /c:"sdk.dir=" "%ANDROID_DIR%\local.properties"') do set "SDK_DIR=%%a"
 )
 
 :: Fall back to ANDROID_HOME

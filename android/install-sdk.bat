@@ -4,8 +4,9 @@ echo Installing Android SDK Command-line Tools
 echo ============================================
 echo.
 
-set SDK_ROOT=%CD%\android-sdk
-set CMDLINE_TOOLS_ZIP=%CD%\commandlinetools-win-11076708_latest (1).zip
+set "SCRIPT_DIR=%~dp0"
+set SDK_ROOT=%SCRIPT_DIR%android-sdk
+set CMDLINE_TOOLS_ZIP=%SCRIPT_DIR%commandlinetools-win-11076708_latest (1).zip
 
 if not exist "%CMDLINE_TOOLS_ZIP%" (
     echo ZIP file not found!
@@ -28,7 +29,7 @@ echo Installing SDK components (this may take a while)...
 
 echo.
 echo Updating local.properties...
-echo sdk.dir=%SDK_ROOT% > local.properties
+echo sdk.dir=%SDK_ROOT% > "%SCRIPT_DIR%local.properties"
 
 echo.
 echo ============================================

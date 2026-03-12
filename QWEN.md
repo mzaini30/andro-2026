@@ -8,32 +8,42 @@
 
 ```
 D:\Andro\
-├── andro.yml              # Main configuration file
+├── andro.yml              # Main configuration file (root)
+├── andro.md               # User documentation (root)
 ├── andro.bat              # Main build script (run this)
-├── bootstrap-gradle.bat   # Gradle wrapper downloader
-├── generate_project.ps1   # Project generator PowerShell script
-├── gradlew.bat            # Gradle wrapper for Windows
-├── keystore.jks           # Signing key (auto-generated)
-├── perintah.txt           # Original requirements document
-├── round.png              # Application icon
-├── README.md              # User documentation
-├── QWEN.md                # This file - project context
-├── ai/
-│   └── ads.txt            # Start.io SDK documentation
-├── gradle/
-│   └── wrapper/
-│       └── gradle-wrapper.properties
-├── html/
-│   ├── index.html         # Home page (web assets)
+├── html/                  # Web assets (or configured path)
+│   ├── index.html         # Home page
 │   └── about.html         # About page
-└── app/                   # Generated Android project
+├── round.png              # Application icon
+├── perintah.txt           # Original requirements document
+├── QWEN.md                # This file - project context
+├── README.md              # User documentation
+└── android/               # All Android build files and scripts
+    ├── accept-licenses.bat
+    ├── bootstrap-gradle.bat
     ├── build.gradle
-    ├── proguard-rules.pro
-    └── src/main/
-        ├── AndroidManifest.xml
-        ├── java/.../MainActivity.java
-        ├── res/
-        └── assets/
+    ├── create_dirs.ps1
+    ├── generate_project.ps1
+    ├── gradle.properties
+    ├── gradlew.bat
+    ├── install-packages.bat
+    ├── install-sdk.bat
+    ├── keystore.jks           # Signing key (auto-generated)
+    ├── parse_yaml.ps1
+    ├── settings.gradle
+    ├── ai/
+    │   └── ads.txt            # Start.io SDK documentation
+    ├── gradle/
+    │   └── wrapper/
+    │       └── gradle-wrapper.properties
+    └── app/                   # Generated Android project
+        ├── build.gradle
+        ├── proguard-rules.pro
+        └── src/main/
+            ├── AndroidManifest.xml
+            ├── java/.../MainActivity.java
+            ├── res/
+            └── assets/
 ```
 
 ## Configuration (`andro.yml`)

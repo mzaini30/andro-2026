@@ -10,10 +10,12 @@ echo   - Build Tools 34.0.0
 echo   - Build Tools 33.0.1
 echo.
 
+set "SCRIPT_DIR=%~dp0"
+
 :: Try to get SDK path from local.properties first
 set "SDK_DIR="
-if exist "%CD%\local.properties" (
-    for /f "tokens=2 delims==" %%a in ('findstr /c:"sdk.dir=" "%CD%\local.properties"') do set "SDK_DIR=%%a"
+if exist "%SCRIPT_DIR%local.properties" (
+    for /f "tokens=2 delims==" %%a in ('findstr /c:"sdk.dir=" "%SCRIPT_DIR%local.properties"') do set "SDK_DIR=%%a"
 )
 
 :: Fall back to ANDROID_HOME

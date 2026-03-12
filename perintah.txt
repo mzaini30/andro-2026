@@ -1,1 +1,3 @@
-Coba buatkan perintah seperti "andro init" yang nanti akan membuat file andro.yml dengan dummy isian dan buatkan juga andro.md yang merupakan catatan tentang andro untuk LLM AI Coding
+Oh iya sama saya maunya itu semua file dan folder android itu jangan di root tapi harusnya di folder android. Takutnya nanti akan menumpuk folder yang sudah ada dengan nama yang sama
+
+Kecuali untuk file andro.yml dan file andro.md itu di root aja. Yang lainnya di folder android
