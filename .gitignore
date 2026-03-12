@@ -65,3 +65,8 @@ Thumbs.db
 gradle-app.setting
 *.zip
 android-sdk
+
+# Generated Android project
+# android/
+# Generated Android project
+# android/
