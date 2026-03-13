@@ -1,1 +1,14 @@
-Pada file APK hasil build yang di android/app/build/outputs/apk/debug/app-debug.apk misalnya di project A dan di project B. Berarti kan ada dua file APK debug. Nah, misalnya aku sudah install yang APK project B, itu nggak bisa install APK project A. Padahal id aplikasinya berbeda. Itu kenapa ya?
+Kan hasil build APK itu di android/app/build/outputs/apk/debug/app-debug.apk ya? Nah, aku maunya setelah selesai dibuild APKnya, namanya direname. Jadi, bukan app-debug.apk. Kalau misalnya nama projectnya adalah Bunga Matahari, maka harusnya nama aplikasinya jadi "Bunga Matahari.apk". Nah, untuk nama projectnya bisa kamu dapatkan dari andro.yml
+
+Error saat rename:
+BUILD SUCCESSFUL in 1m 26s
+73 actionable tasks: 73 up-to-date
+
+============================================
+  Build Complete
+============================================
+
+Renaming output files...
+=%"
+ was unexpected at this time.
+The syntax of the command is incorrect.

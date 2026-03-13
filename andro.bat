@@ -323,16 +323,10 @@ echo ============================================
 echo   Build Complete!
 echo ============================================
 echo.
-echo Output files:
-if exist "%ANDROID_DIR%\app\build\outputs\apk\debug\app-debug.apk" (
-    echo   APK [Debug]:  %ANDROID_DIR%\app\build\outputs\apk\debug\app-debug.apk
-)
-if exist "%ANDROID_DIR%\app\build\outputs\apk\release\app-release.apk" (
-    echo   APK [Release]: %ANDROID_DIR%\app\build\outputs\apk\release\app-release.apk
-)
-if exist "%ANDROID_DIR%\app\build\outputs\bundle\release\app-release.aab" (
-    echo   AAB [Release]: %ANDROID_DIR%\app\build\outputs\bundle\release\app-release.aab
-)
+
+REM Rename APK and AAB files using the app title
+echo Renaming output files...
+powershell -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_ANDROID_DIR%\rename_output.ps1" -title "%APP_TITLE%" -androidDir "%ANDROID_DIR%"
 echo.
 
 cd /d "%CONFIG_DIR%"
