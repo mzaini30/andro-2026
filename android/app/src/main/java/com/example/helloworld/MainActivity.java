@@ -34,9 +34,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.lifecycle.DefaultLifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
 
@@ -146,16 +143,10 @@ public class MainActivity extends AppCompatActivity {
         // Load the main page
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
 
-        // Register lifecycle observer for App Open ads
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(new DefaultLifecycleObserver() {
-            @Override
-            public void onStart(@NonNull LifecycleOwner owner) {
-                // Show app open ad when app comes to foreground
-                if (!"ca-app-pub-2408628281705149/3832944231".isEmpty()) {
-                    appOpenAdManager.showAdIfAvailable(MainActivity.this);
-                }
-            }
-        });
+        // Load app open ad (will show on next app foreground)
+        if (!"ca-app-pub-2408628281705149/3832944231".isEmpty()) {
+            appOpenAdManager.loadAd();
+        }
     }
 
     private void loadBannerAd() {
@@ -448,6 +439,7 @@ public class MainActivity extends AppCompatActivity {
     // App Open Ad Manager class
     private class AppOpenAdManager {
         private static final String LOG_TAG = "AppOpenAdManager";
+        private boolean isLoadingAd = false;
         private long loadTime = 0;
 
         public AppOpenAdManager() {}
