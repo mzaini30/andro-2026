@@ -226,10 +226,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            if (!allGranted) {
-                Toast.makeText(this, "Some permissions were denied. Some features may not work.",
-                    Toast.LENGTH_LONG).show();
-            }
         }
     }
 

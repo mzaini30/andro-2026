@@ -101,8 +101,9 @@ dependencies {
     // Google Mobile Ads SDK (AdMob)
     implementation 'com.google.android.gms:play-services-ads:25.0.0'
 
-    // Lifecycle for App Open ads
-    implementation 'androidx.lifecycle:lifecycle-process:2.8.3'
+    // Lifecycle for App Open ads (lifecycle-common-java8 required for ReportFragment)
+    implementation 'androidx.lifecycle:lifecycle-process:2.6.2'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.6.2'
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
@@ -491,10 +492,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            if (!allGranted) {
-                Toast.makeText(this, "Some permissions were denied. Some features may not work.",
-                    Toast.LENGTH_LONG).show();
-            }
         }
     }
 
