@@ -95,7 +95,7 @@ echo Creating andro.yml...
 (
 echo - title: ""
 echo - version: "1"
-echo - package: "com.mzaini30"
+echo - package: "com.mzaini30."
 echo - icon: ""
 echo - web: "html"
 echo - ads:
