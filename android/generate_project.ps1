@@ -136,8 +136,8 @@ $androidManifest = @"
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" tools:node="remove"/>
 
     <!-- Location/GPS -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
 
     <!-- Camera -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -168,6 +168,12 @@ $androidManifest = @"
 
     <!-- Vibration -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    
+    <!-- Amazon -->
+    <!-- <uses-permission android:name="android.hardware.location.gps" android:required="false" />
+    <uses-permission android:name="android.hardware.bluetooth" android:required="false" />
+    <uses-permission android:name="android.hardware.location.network" android:required="false" />
+    <uses-permission android:name="android.hardware.location" android:required="false" /> -->
 
     <!-- Application -->
     <application
@@ -280,7 +286,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.GeolocationPermissions;
+// import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
@@ -340,8 +346,8 @@ public class MainActivity extends AppCompatActivity {
         Manifest.permission.CAMERA,
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
+        // Manifest.permission.ACCESS_FINE_LOCATION,
+        // Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.RECORD_AUDIO,
         Manifest.permission.BLUETOOTH,
         Manifest.permission.BLUETOOTH_CONNECT,
@@ -519,7 +525,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setDomStorageEnabled(true);
 
         // Enable geolocation
-        webSettings.setGeolocationEnabled(true);
+        // webSettings.setGeolocationEnabled(true);
 
         // Enable zoom
         webSettings.setSupportZoom(true);
@@ -567,11 +573,11 @@ public class MainActivity extends AppCompatActivity {
         // WebChromeClient for advanced features
         webView.setWebChromeClient(new WebChromeClient() {
             // Geolocation permissions
-            @Override
-            public void onGeolocationPermissionsShowPrompt(String origin,
-                    GeolocationPermissions.Callback callback) {
-                callback.invoke(origin, true, false);
-            }
+            // @Override
+            // public void onGeolocationPermissionsShowPrompt(String origin,
+            // GeolocationPermissions.Callback callback) {
+            // callback.invoke(origin, true, false);
+            // }
 
             // File upload handling
             @Override
