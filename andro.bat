@@ -150,6 +150,35 @@ echo   Andro - Android Build Tool
 echo ============================================
 echo.
 
+REM Check and create .gitignore if not exists
+if not exist "%CONFIG_DIR%\.gitignore" (
+    echo Creating .gitignore...
+    (
+    echo # Android build artifacts
+    echo android/build/
+    echo android/app/build/
+    echo android/.gradle/
+    echo android/app/src/main/res/mipmap-*/
+    echo android/app/src/main/res/drawable-*/
+    echo *.apk
+    echo *.aab
+    echo *.jks
+    echo *.keystore
+    echo.
+    echo # Gradle
+    echo .gradle/
+    echo gradle-app.secure.properties
+    echo.
+    echo # IDE
+    echo .idea/
+    echo *.iml
+    echo *.ipr
+    echo *.iws
+    echo ) > "%CONFIG_DIR%\.gitignore"
+    echo   Created: %CONFIG_DIR%\.gitignore
+    echo.
+)
+
 REM Check if andro.yml exists
 if not exist "%CONFIG_FILE%" (
     echo ERROR: Configuration file not found: %CONFIG_FILE%

@@ -1,2 +1,1 @@
-ketika saya install apliikasi, dia langsung menutup. kenapa? activity nggak terlaunch ya?
-coba ediit ./android/generate_project.ps1 berdasarkan android\app\src\main\java\com\example\helloworld\MainActivity.java (dicocokkan)
+Di ./andro.bat, itu perintah pertama adalah cek apakah ada .gitignore di folder saat ini. Jika tidak ada, buat

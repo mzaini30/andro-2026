@@ -351,10 +351,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize Google Mobile Ads SDK
-        MobileAds.initialize(this, initializationStatus -> {
-            Log.d(TAG, "Mobile Ads SDK initialized");
-        });
+        try {
+            // Initialize Google Mobile Ads SDK
+            MobileAds.initialize(this, initializationStatus -> {
+                Log.d(TAG, "Mobile Ads SDK initialized: " + initializationStatus.getAdapterStatusMap());
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to initialize Mobile Ads SDK", e);
+            Toast.makeText(this, "Ad initialization error", Toast.LENGTH_SHORT).show();
+        }
 
         // Initialize App Open Ad Manager
         appOpenAdManager = new AppOpenAdManager();
@@ -410,36 +415,45 @@ public class MainActivity extends AppCompatActivity {
 
         // Load app open ad (will show on next app foreground)
         if (!"$ads_open".isEmpty()) {
-            appOpenAdManager.loadAd();
+            try {
+                appOpenAdManager.loadAd();
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading app open ad", e);
+            }
         }
     }
 
     private void loadBannerAd() {
         if (adView != null) {
-            AdRequest adRequest = new AdRequest.Builder().build();
-            adView.loadAd(adRequest);
-            adView.setAdListener(new AdListener() {
-                @Override
-                public void onAdLoaded() {
-                    Log.d(TAG, "Banner ad loaded");
-                }
+            try {
+                AdRequest adRequest = new AdRequest.Builder().build();
+                adView.loadAd(adRequest);
+                adView.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdLoaded() {
+                        Log.d(TAG, "Banner ad loaded");
+                    }
 
-                @Override
-                public void onAdFailedToLoad(@NonNull LoadAdError adError) {
-                    Log.d(TAG, "Banner ad failed to load: " + adError.getMessage());
-                    adView = null;
-                }
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError adError) {
+                        Log.d(TAG, "Banner ad failed to load: " + adError.getMessage());
+                        adView = null;
+                    }
 
-                @Override
-                public void onAdClicked() {
-                    Log.d(TAG, "Banner ad clicked");
-                }
+                    @Override
+                    public void onAdClicked() {
+                        Log.d(TAG, "Banner ad clicked");
+                    }
 
-                @Override
-                public void onAdImpression() {
-                    Log.d(TAG, "Banner ad impression");
-                }
-            });
+                    @Override
+                    public void onAdImpression() {
+                        Log.d(TAG, "Banner ad impression");
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(TAG, "Error loading banner ad", e);
+                adView = null;
+            }
         }
     }
 
@@ -802,15 +816,15 @@ if (!(Test-Path "$output\gradle\wrapper")) {
 [System.IO.File]::WriteAllText("$output\gradle\wrapper\gradle-wrapper.properties", $gradleWrapperProps, [System.Text.UTF8Encoding]::new($false))
 
 # Update .gitignore in project root to exclude android/ folder
-$gitignorePath = Join-Path $output ".." | Join-Path -ChildPath ".gitignore"
-if ([System.IO.File]::Exists($gitignorePath)) {
-    $gitignoreContent = [System.IO.File]::ReadAllText($gitignorePath)
-    # Check if "android/" is already in .gitignore
-    if ($gitignoreContent -notmatch '(?m)^android/$') {
-        # Append android/ to .gitignore
-        [System.IO.File]::AppendAllText($gitignorePath, "`n# Generated Android project`nandroid/", [System.Text.UTF8Encoding]::new($false))
-        Write-Host "Added 'android/' to .gitignore"
-    }
-}
+# $gitignorePath = Join-Path $output ".." | Join-Path -ChildPath ".gitignore"
+# if ([System.IO.File]::Exists($gitignorePath)) {
+#     $gitignoreContent = [System.IO.File]::ReadAllText($gitignorePath)
+#     # Check if "android/" is already in .gitignore
+#     if ($gitignoreContent -notmatch '(?m)^android/$') {
+#         # Append android/ to .gitignore
+#         [System.IO.File]::AppendAllText($gitignorePath, "`n# Generated Android project`nandroid/", [System.Text.UTF8Encoding]::new($false))
+#         Write-Host "Added 'android/' to .gitignore"
+#     }
+# }
 
 Write-Host "Project files generated successfully."
