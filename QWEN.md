@@ -225,3 +225,12 @@ Android.vibrate(1000)
 - `ai/ads.txt` - Complete Start.io SDK integration guide
 - `README.md` - User-facing documentation
 - `perintah.txt` - Original requirements (in Indonesian)
+
+## Iklan 
+
+- Untuk iklan, hanya gunakan Admob
+- Untuk cara menggunakan Admob, cek ./Admob/Persiapan.txt, ./Admob/Banner.txt, ./Admob/AppOpen.txt
+
+## Update Generate Project
+
+- Ketika ada perubahan di project Android, update juga file ./android/generate_project.ps1

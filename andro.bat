@@ -166,12 +166,14 @@ for /f "usebackq delims=" %%i in ("%TEMP%\andro_config.tmp") do set "%%i"
 del "%TEMP%\andro_config.tmp"
 
 echo Configuration loaded:
-echo   Title:   %APP_TITLE%
-echo   Version: %APP_VERSION%
-echo   Package: %APP_PACKAGE%
-echo   Icon:    %APP_ICON%
-echo   Web:     %APP_WEB%
-echo   Ads ID:  %APP_ADS%
+echo   Title:      %APP_TITLE%
+echo   Version:    %APP_VERSION%
+echo   Package:    %APP_PACKAGE%
+echo   Icon:       %APP_ICON%
+echo   Web:        %APP_WEB%
+echo   AdMob ID:   %APP_ADS_ID%
+echo   Banner ID:  %APP_ADS_BANNER%
+echo   Open ID:    %APP_ADS_OPEN%
 echo.
 
 REM Check Java
@@ -269,7 +271,7 @@ if not exist "%ANDROID_DIR%\keystore.jks" (
 
 REM Generate source files using PowerShell
 echo Generating source files...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "& '%SCRIPT_ANDROID_DIR%\generate_project.ps1' -title '%APP_TITLE%' -version '%APP_VERSION%' -package '%APP_PACKAGE%' -ads '%APP_ADS%' -output '%ANDROID_DIR%'"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& '%SCRIPT_ANDROID_DIR%\generate_project.ps1' -title '%APP_TITLE%' -version '%APP_VERSION%' -package '%APP_PACKAGE%' -ads_id '%APP_ADS_ID%' -ads_banner '%APP_ADS_BANNER%' -ads_open '%APP_ADS_OPEN%' -output '%ANDROID_DIR%'"
 
 if errorlevel 1 (
     echo ERROR: Failed to generate source files.

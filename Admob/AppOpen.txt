@@ -1,0 +1,227 @@
+App open ads
+
+Extend the Application class
+Create a new class that extends the Application class. This provides a lifecycle-aware way to manage ads that are tied to the application's state rather than a single Activity:
+public class MyApplication extends Application
+    implements ActivityLifecycleCallbacks, DefaultLifecycleObserver {
+
+  private AppOpenAdManager appOpenAdManager;
+  private Activity currentActivity;
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    this.registerActivityLifecycleCallbacks(this);
+
+    ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+    appOpenAdManager = new AppOpenAdManager();
+  }
+
+Next, add the following code to your AndroidManifest.xml:
+<!-- TODO: Update to reference your actual package name. -->
+<application
+    android:name="com.google.android.gms.example.appopendemo.MyApplication" ...>
+...
+</application>
+Implement your utility component
+Your ad should show quickly, so it's best to load your ad before you need to display it. That way, you'll have an ad ready to go as soon as your user enters into your app.
+
+Implement a utility component AppOpenAdManager to encapsulate the work related to loading and showing App Open ads:
+private class AppOpenAdManager {
+
+  private static final String LOG_TAG = "AppOpenAdManager";
+  private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/9257395921";
+
+  private AppOpenAd appOpenAd = null;
+  private boolean isLoadingAd = false;
+  private boolean isShowingAd = false;
+
+  /** Keep track of the time an app open ad is loaded to ensure you don't show an expired ad. */
+  private long loadTime = 0;
+
+  /** Constructor. */
+  public AppOpenAdManager() {}
+To use the AppOpenAdManager, call the public wrapper methods on the singleton MyApplication instance. The Application class interfaces with the rest of the code, delegating the work of loading and showing the ad to the manager.
+
+Load an ad
+The next step is to fill out the loadAd() method and handle the ad load callbacks.
+AppOpenAd.load(
+    context,
+    "AD_UNIT_ID",
+    new AdRequest.Builder().build(),
+    new AppOpenAdLoadCallback() {
+      @Override
+      public void onAdLoaded(AppOpenAd ad) {
+        // Called when an app open ad has loaded.
+        Log.d(LOG_TAG, "App open ad loaded.");
+
+        appOpenAd = ad;
+        isLoadingAd = false;
+        loadTime = (new Date()).getTime();
+      }
+
+      @Override
+      public void onAdFailedToLoad(LoadAdError loadAdError) {
+        // Called when an app open ad has failed to load.
+        Log.d(LOG_TAG, "App open ad failed to load with error: " + loadAdError.getMessage());
+
+        isLoadingAd = false;
+      }
+    });
+Replace AD_UNIT_ID with your own ad unit ID.
+
+Show the ad
+The most common app open implementation is to attempt to show an app open ad near app launch, start app content if the ad isn't ready, and preload another ad for the next app open opportunity. See App open ad guidance for implementation examples.
+
+The following code shows and subsequently reloads an ad:
+public void showAdIfAvailable(
+    @NonNull final Activity activity,
+    @NonNull OnShowAdCompleteListener onShowAdCompleteListener) {
+  // If the app open ad is already showing, do not show the ad again.
+  if (isShowingAd) {
+    Log.d(TAG, "The app open ad is already showing.");
+    return;
+  }
+
+  // If the app open ad is not available yet, invoke the callback then load the ad.
+  if (appOpenAd == null) {
+    Log.d(TAG, "The app open ad is not ready yet.");
+    onShowAdCompleteListener.onShowAdComplete();
+    // Load an ad.
+    return;
+  }
+
+  isShowingAd = true;
+  appOpenAd.show(activity);
+}
+Set the FullScreenContentCallback
+The FullScreenContentCallback handles events related to displaying your AppOpenAd. Before showing AppOpenAd, make sure to set the callback:
+appOpenAd.setFullScreenContentCallback(
+    new FullScreenContentCallback() {
+      @Override
+      public void onAdDismissedFullScreenContent() {
+        // Called when full screen content is dismissed.
+        Log.d(TAG, "Ad dismissed fullscreen content.");
+        // Don't forget to set the ad reference to null so you
+        // don't show the ad a second time.
+        appOpenAd = null;
+        isShowingAd = false;
+
+        onShowAdCompleteListener.onShowAdComplete();
+        // Load an ad.
+      }
+
+      @Override
+      public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+        // Called when full screen content failed to show.
+        Log.d(TAG, adError.getMessage());
+        appOpenAd = null;
+        // Don't forget to set the ad reference to null so you
+        // don't show the ad a second time.
+        isShowingAd = false;
+
+        onShowAdCompleteListener.onShowAdComplete();
+        // Load an ad.
+      }
+
+      @Override
+      public void onAdShowedFullScreenContent() {
+        Log.d(TAG, "Ad showed fullscreen content.");
+      }
+
+      @Override
+      public void onAdImpression() {
+        // Called when an impression is recorded for an ad.
+        Log.d(TAG, "The ad recorded an impression.");
+      }
+
+      @Override
+      public void onAdClicked() {
+        // Called when ad is clicked.
+        Log.d(TAG, "The ad was clicked.");
+      }
+    });
+Key Point: If a user returns to your app after having left it by clicking on an app open ad, it makes sure they're not presented with another app open ad.
+Consider ad expiration
+Key Point: App open ads will time out after four hours. Ads rendered more than four hours after request time will no longer be valid and may not earn revenue.
+To make sure you don't show an expired ad, add a method to the AppOpenAdManager that checks how long it has been since your ad reference loaded. Then, use that method to check if the ad is still valid.
+/** Check if ad was loaded more than n hours ago. */
+private boolean wasLoadTimeLessThanNHoursAgo(long numHours) {
+  long dateDifference = (new Date()).getTime() - loadTime;
+  long numMilliSecondsPerHour = 3600000;
+  return (dateDifference < (numMilliSecondsPerHour * numHours));
+}
+
+/** Check if ad exists and can be shown. */
+private boolean isAdAvailable() {
+  // For time interval details, see: https://support.google.com/admob/answer/9341964
+  return appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4);
+}
+
+Keep track of current activity
+To show the ad, you'll need an Activity context. To keep track of the most current activity being used, register for and implement the Application.ActivityLifecycleCallbacks.
+@Override
+public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {}
+
+@Override
+public void onActivityStarted(@NonNull Activity activity) {
+  // An ad activity is started when an ad is showing, which could be AdActivity class from Google
+  // SDK or another activity class implemented by a third party mediation partner. Updating the
+  // currentActivity only when an ad is not showing will ensure it is not an ad activity, but the
+  // one that shows the ad.
+  if (!appOpenAdManager.isShowingAd) {
+    currentActivity = activity;
+  }
+}
+
+@Override
+public void onActivityResumed(@NonNull Activity activity) {}
+
+@Override
+public void onActivityPaused(@NonNull Activity activity) {}
+
+@Override
+public void onActivityStopped(@NonNull Activity activity) {}
+
+@Override
+public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
+
+@Override
+public void onActivityDestroyed(@NonNull Activity activity) {}
+
+registerActivityLifecycleCallbacks lets you listen for all Activity events. By listening for when activities are started and destroyed, you can keep track of a reference to the current Activity, which you then will use in presenting your app open ad.
+
+Listen for app foregrounding events
+To listen for app foreground events, do the following steps:
+
+Add the libraries to your gradle file
+To be notified of app foregrounding events, you need to register a DefaultLifecycleObserver. Add its dependency to your app-level build file:
+  dependencies {
+    implementation 'com.google.android.gms:play-services-ads:25.0.0'
+    implementation 'androidx.lifecycle:lifecycle-process:2.8.3'
+  }
+Implement the lifecycle observer interface
+You can listen for foregrounding events by implementing the DefaultLifecycleObserver interface.
+
+Implement the onStart() to show the app open ad.
+@Override
+public void onStart(@NonNull LifecycleOwner owner) {
+  DefaultLifecycleObserver.super.onStart(owner);
+  // Show the ad (if available) when the app moves to foreground.
+  appOpenAdManager.showAdIfAvailable(currentActivity);
+}
+
+Cold starts and loading screens
+The documentation thus far assumes that you only show app open ads when users foreground your app when it is suspended in memory. "Cold starts" occur when your app is launched but was not previously suspended in memory.
+
+An example of a cold start is when a user opens your app for the first time. With cold starts, you won't have a previously loaded app open ad that's ready to be shown right away. The delay between when you request an ad and receive an ad back can create a situation where users are able to briefly use your app before being surprised by an out of context ad. This should be avoided because it is a bad user experience.
+
+The preferred way to use app open ads on cold starts is to use a loading screen to load your game or app assets, and to only show the ad from the loading screen. If your app has completed loading and has sent the user to the main content of your app, don't show the ad.
+
+Key Point: To continue loading app assets while the app open ad is being displayed, always load assets in a background thread.
+Best practices
+App open ads help you monetize your app's loading screen, when the app first launches and during app switches, but it's important to keep best practices in mind so that your users enjoy using your app. It's best to:
+
+Show your first app open ad after your users have used your app a few times.
+Show app open ads during times when your users would otherwise be waiting for your app to load.
+If you have a loading screen under the app open ad, and your loading screen completes loading before the ad is dismissed, you may want to dismiss your loading screen in the onAdDismissedFullScreenContent() method.

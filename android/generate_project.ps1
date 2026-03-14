@@ -2,7 +2,9 @@ param(
     [string]$title,
     [string]$version,
     [string]$package,
-    [string]$ads,
+    [string]$ads_id,
+    [string]$ads_banner,
+    [string]$ads_open,
     [string]$output
 )
 
@@ -23,7 +25,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://s3.amazonaws.com/startapp/' }
     }
 }
 rootProject.name = "$title"
@@ -35,7 +36,7 @@ include ':app'
 $rootBuildGradle = @"
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id 'com.android.application' version '8.1.0' apply false
+    id 'com.android.application' version '8.3.0' apply false
 }
 "@
 [System.IO.File]::WriteAllText("$output\build.gradle", $rootBuildGradle, [System.Text.UTF8Encoding]::new($false))
@@ -65,7 +66,7 @@ android {
 
     defaultConfig {
         applicationId '$package'
-        minSdk 21
+        minSdk 23
         targetSdk 34
         versionCode $version
         versionName '$version'
@@ -97,8 +98,11 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.webkit:webkit:1.8.0'
 
-    // Start.io SDK (formerly StartApp)
-    implementation 'com.startapp:inapp-sdk:5.1.0'
+    // Google Mobile Ads SDK (AdMob)
+    implementation 'com.google.android.gms:play-services-ads:25.0.0'
+
+    // Lifecycle for App Open ads
+    implementation 'androidx.lifecycle:lifecycle-process:2.8.3'
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
@@ -110,21 +114,12 @@ dependencies {
 
 # Create proguard-rules.pro
 $proguardRules = @"
-# Start.io SDK
--keep class com.startapp.** { *; }
--keep class com.truenet.** { *; }
--keepattributes Exceptions, InnerClasses, Signature, Deprecated, SourceFile, LineNumberTable, *Annotation*, EnclosingMethod
+# Google Mobile Ads SDK (AdMob)
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.android.gms.** { *; }
 -dontwarn android.webkit.JavascriptInterface
--dontwarn com.startapp.**
--dontwarn org.jetbrains.annotations.**
--dontwarn kotlin.**
--dontwarn kotlin.Metadata
-
-# Suppress Kotlin metadata warnings from Start.io SDK
-# These classes use newer Kotlin versions than R8 supports
--keepclassmembers class com.startapp.sdk.ads.external.config.** {
-    ** $annotationName;
-}
+-dontwarn com.google.android.gms.**
+-keepattributes Exceptions, InnerClasses, Signature, Deprecated, SourceFile, LineNumberTable, *Annotation*, EnclosingMethod
 "@
 [System.IO.File]::WriteAllText("$output\app\proguard-rules.pro", $proguardRules, [System.Text.UTF8Encoding]::new($false))
 
@@ -184,13 +179,10 @@ $androidManifest = @"
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true">
 
-        <!-- Start.io SDK Configuration -->
+        <!-- Google Mobile Ads SDK (AdMob) Configuration -->
         <meta-data
-            android:name="com.startapp.sdk.APPLICATION_ID"
-            android:value="$ads" />
-        <meta-data
-            android:name="com.startapp.sdk.RETURN_ADS_ENABLED"
-            android:value="true" />
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="$ads_id" />
 
         <!-- Main Activity -->
         <activity
@@ -275,6 +267,7 @@ package $package;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -283,8 +276,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
+import android.view.ViewGroup;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
@@ -295,20 +289,32 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
 
-import com.startapp.sdk.adsbase.StartAppSDK;
-import com.startapp.sdk.adsbase.StartAppAd;
-import com.startapp.sdk.ads.banner.Banner;
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.appopen.AppOpenAd;
+import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback;
 
 import java.io.File;
 import java.io.IOException;
@@ -324,6 +330,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int FILE_CHOOSER_REQUEST = 1;
     private static final int PERMISSION_REQUEST_CODE = 100;
     private String currentPhotoPath;
+
+    // AdMob variables
+    private AdView adView;
+    private AppOpenAd appOpenAd = null;
+    private AppOpenAdManager appOpenAdManager;
+    private boolean isShowingAd = false;
+    private static final String TAG = "MainActivity";
 
     private static final String[] REQUIRED_PERMISSIONS = {
         Manifest.permission.CAMERA,
@@ -341,10 +354,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize Start.io SDK
-        if (!"$ads".isEmpty()) {
-            StartAppSDK.init(this, "$ads", true);
-        }
+        // Initialize Google Mobile Ads SDK
+        MobileAds.initialize(this, initializationStatus -> {
+            Log.d(TAG, "Mobile Ads SDK initialized");
+        });
+
+        // Initialize App Open Ad Manager
+        appOpenAdManager = new AppOpenAdManager();
 
         // Request permissions
         requestPermissions();
@@ -361,10 +377,10 @@ public class MainActivity extends AppCompatActivity {
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
 
-        if (!"$ads".isEmpty()) {
-            // Create Banner
-            Banner startAppBanner = new Banner(this);
-            startAppBanner.setId(View.generateViewId());
+        // Create AdMob Banner
+        if (!"$ads_banner".isEmpty()) {
+            FrameLayout adContainerView = new FrameLayout(this);
+            adContainerView.setId(View.generateViewId());
             RelativeLayout.LayoutParams bannerParams = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -372,10 +388,18 @@ public class MainActivity extends AppCompatActivity {
             bannerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
             // Align WebView above Banner
-            webViewParams.addRule(RelativeLayout.ABOVE, startAppBanner.getId());
+            webViewParams.addRule(RelativeLayout.ABOVE, adContainerView.getId());
 
-            // Add views to layout
-            layout.addView(startAppBanner, bannerParams);
+            // Create AdView
+            adView = new AdView(this);
+            adView.setAdUnitId("$ads_banner");
+            adView.setAdSize(AdSize.getLargeAnchoredAdaptiveBannerAdSize(this, AdSize.FULL_WIDTH));
+
+            adContainerView.addView(adView);
+            layout.addView(adContainerView, bannerParams);
+
+            // Load banner ad
+            loadBannerAd();
         }
 
         layout.addView(webView, webViewParams);
@@ -386,6 +410,46 @@ public class MainActivity extends AppCompatActivity {
 
         // Load the main page
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+
+        // Register lifecycle observer for App Open ads
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new DefaultLifecycleObserver() {
+            @Override
+            public void onStart(@NonNull LifecycleOwner owner) {
+                // Show app open ad when app comes to foreground
+                if (!"$ads_open".isEmpty()) {
+                    appOpenAdManager.showAdIfAvailable(MainActivity.this);
+                }
+            }
+        });
+    }
+
+    private void loadBannerAd() {
+        if (adView != null) {
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adView.loadAd(adRequest);
+            adView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    Log.d(TAG, "Banner ad loaded");
+                }
+
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError adError) {
+                    Log.d(TAG, "Banner ad failed to load: " + adError.getMessage());
+                    adView = null;
+                }
+
+                @Override
+                public void onAdClicked() {
+                    Log.d(TAG, "Banner ad clicked");
+                }
+
+                @Override
+                public void onAdImpression() {
+                    Log.d(TAG, "Banner ad impression");
+                }
+            });
+        }
     }
 
     private void requestPermissions() {
@@ -578,8 +642,6 @@ public class MainActivity extends AppCompatActivity {
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
-            // Show interstitial ad on exit
-            StartAppAd.onBackPressed(this);
             super.onBackPressed();
         }
     }
@@ -588,18 +650,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         webView.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         webView.onPause();
+        if (adView != null) {
+            adView.pause();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         webView.destroy();
+        if (adView != null) {
+            adView.destroy();
+            adView = null;
+        }
     }
 
     // JavaScript Interface for native features
@@ -637,6 +709,89 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    // App Open Ad Manager class
+    private class AppOpenAdManager {
+        private static final String LOG_TAG = "AppOpenAdManager";
+        private long loadTime = 0;
+
+        public AppOpenAdManager() {}
+
+        public void loadAd() {
+            if (isLoadingAd || isAdAvailable()) {
+                return;
+            }
+
+            isLoadingAd = true;
+            AppOpenAd.load(
+                MainActivity.this,
+                "$ads_open",
+                new AdRequest.Builder().build(),
+                new AppOpenAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull AppOpenAd ad) {
+                        Log.d(LOG_TAG, "App open ad loaded.");
+                        appOpenAd = ad;
+                        isLoadingAd = false;
+                        loadTime = (new Date()).getTime();
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        Log.d(LOG_TAG, "App open ad failed to load with error: " + loadAdError.getMessage());
+                        isLoadingAd = false;
+                    }
+                });
+        }
+
+        public void showAdIfAvailable(@NonNull Activity activity) {
+            if (isShowingAd) {
+                Log.d(TAG, "The app open ad is already showing.");
+                return;
+            }
+
+            if (!isAdAvailable()) {
+                Log.d(TAG, "The app open ad is not ready yet.");
+                loadAd();
+                return;
+            }
+
+            isShowingAd = true;
+            appOpenAd.show(activity);
+            appOpenAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "Ad dismissed fullscreen content.");
+                    appOpenAd = null;
+                    isShowingAd = false;
+                    loadAd();
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                    Log.d(TAG, "Ad failed to show: " + adError.getMessage());
+                    appOpenAd = null;
+                    isShowingAd = false;
+                    loadAd();
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    Log.d(TAG, "Ad showed fullscreen content.");
+                }
+            });
+        }
+
+        private boolean isAdAvailable() {
+            return appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4);
+        }
+
+        private boolean wasLoadTimeLessThanNHoursAgo(long numHours) {
+            long dateDifference = (new Date()).getTime() - loadTime;
+            long numMilliSecondsPerHour = 3600000;
+            return (dateDifference < (numMilliSecondsPerHour * numHours));
+        }
+    }
 }
 "@
 [System.IO.File]::WriteAllText("$output\app\src\main\java\$packagePath\MainActivity.java", $mainActivity, [System.Text.UTF8Encoding]::new($false))
@@ -645,7 +800,7 @@ public class MainActivity extends AppCompatActivity {
 $gradleWrapperProps = @"
 distributionBase=GRADLE_USER_HOME
 distributionPath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-bin.zip
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip
 zipStoreBase=GRADLE_USER_HOME
 zipStorePath=wrapper/dists
 "@

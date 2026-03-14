@@ -1,0 +1,65 @@
+App prerequisites
+Make sure that your app's build file uses the following values:
+
+Minimum SDK version of 23 or higher
+Compile SDK version of 35 or higher
+
+Configure your app 
+In your Gradle settings file, include the Google's Maven repository and Maven central repository:
+
+pluginManagement {
+  repositories {
+    google()
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
+
+dependencyResolutionManagement {
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+  repositories {
+    google()
+    mavenCentral()
+  }
+}
+
+rootProject.name = "My Application"
+include ':app'
+
+Add the dependencies for Google Mobile Ads SDK to your app-level build file:
+dependencies {
+  implementation 'com.google.android.gms:play-services-ads:25.0.0'
+}
+
+Click Sync Now. For details on syncing, see Sync projects with Gradle files.
+
+Add your AdMob app ID, as identified in the AdMob web interface, to your app's AndroidManifest.xml file. To do so, add a <meta-data> tag with android:name="com.google.android.gms.ads.APPLICATION_ID". You can find your app ID in the AdMob web interface. For android:value, insert your own AdMob app ID, surrounded by quotation marks.
+
+
+<manifest>
+  <application>
+    <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
+    <meta-data
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+        android:value="SAMPLE_APP_ID"/>
+  </application>
+</manifest>
+Replace SAMPLE_APP_ID with your AdMob app ID. While testing, use the sample app ID shown in the previous example.
+
+Initialize the Google Mobile Ads SDK
+Before loading ads, initialize Google Mobile Ads SDK by calling MobileAds.initialize().
+This method initializes the SDK and calls a completion listener once both Google Mobile Ads SDK and adapter initializations have completed, or after a 30-second timeout. This needs to be done only once, ideally at app launch.
+
+If you're using AdMob Mediation, wait until the completion handler is called before loading ads. This ensures that all mediation adapters are initialized.
+
+Ads may be preloaded by Google Mobile Ads SDK or mediation partner SDKs upon initialization. If you need to obtain consent from users in the European Economic Area (EEA), set any request-specific flags, such as setTagForChildDirectedTreatment() or setTagForUnderAgeOfConsent(), or otherwise take action before loading ads, ensure you do so before initializing Google Mobile Ads SDK.
+
+Here's an example of how to call the initialize() method on a background thread within an Activity:
+
+new Thread(
+        () -> {
+          // Initialize the Google Mobile Ads SDK on a background thread.
+          MobileAds.initialize(this, initializationStatus -> {});
+        })
+    .start();
+

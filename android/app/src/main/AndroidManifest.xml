@@ -52,13 +52,10 @@
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true">
 
-        <!-- Start.io SDK Configuration -->
+        <!-- Google Mobile Ads SDK (AdMob) Configuration -->
         <meta-data
-            android:name="com.startapp.sdk.APPLICATION_ID"
-            android:value="202843390" />
-        <meta-data
-            android:name="com.startapp.sdk.RETURN_ADS_ENABLED"
-            android:value="true" />
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-2408628281705149~8399842800" />
 
         <!-- Main Activity -->
         <activity

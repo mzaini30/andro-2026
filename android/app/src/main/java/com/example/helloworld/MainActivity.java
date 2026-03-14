@@ -2,6 +2,7 @@ package com.example.helloworld;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -10,8 +11,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
+import android.view.ViewGroup;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
@@ -22,20 +24,32 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
 
-import com.startapp.sdk.adsbase.StartAppSDK;
-import com.startapp.sdk.adsbase.StartAppAd;
-import com.startapp.sdk.ads.banner.Banner;
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.appopen.AppOpenAd;
+import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int FILE_CHOOSER_REQUEST = 1;
     private static final int PERMISSION_REQUEST_CODE = 100;
     private String currentPhotoPath;
+
+    // AdMob variables
+    private AdView adView;
+    private AppOpenAd appOpenAd = null;
+    private AppOpenAdManager appOpenAdManager;
+    private boolean isShowingAd = false;
+    private static final String TAG = "MainActivity";
 
     private static final String[] REQUIRED_PERMISSIONS = {
         Manifest.permission.CAMERA,
@@ -68,10 +89,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize Start.io SDK
-        if (!"202843390".isEmpty()) {
-            StartAppSDK.init(this, "202843390", true);
-        }
+        // Initialize Google Mobile Ads SDK
+        MobileAds.initialize(this, initializationStatus -> {
+            Log.d(TAG, "Mobile Ads SDK initialized");
+        });
+
+        // Initialize App Open Ad Manager
+        appOpenAdManager = new AppOpenAdManager();
 
         // Request permissions
         requestPermissions();
@@ -88,10 +112,10 @@ public class MainActivity extends AppCompatActivity {
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
 
-        if (!"202843390".isEmpty()) {
-            // Create Banner
-            Banner startAppBanner = new Banner(this);
-            startAppBanner.setId(View.generateViewId());
+        // Create AdMob Banner
+        if (!"ca-app-pub-2408628281705149/3796086104".isEmpty()) {
+            FrameLayout adContainerView = new FrameLayout(this);
+            adContainerView.setId(View.generateViewId());
             RelativeLayout.LayoutParams bannerParams = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -99,10 +123,18 @@ public class MainActivity extends AppCompatActivity {
             bannerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
             // Align WebView above Banner
-            webViewParams.addRule(RelativeLayout.ABOVE, startAppBanner.getId());
+            webViewParams.addRule(RelativeLayout.ABOVE, adContainerView.getId());
 
-            // Add views to layout
-            layout.addView(startAppBanner, bannerParams);
+            // Create AdView
+            adView = new AdView(this);
+            adView.setAdUnitId("ca-app-pub-2408628281705149/3796086104");
+            adView.setAdSize(AdSize.getLargeAnchoredAdaptiveBannerAdSize(this, AdSize.FULL_WIDTH));
+
+            adContainerView.addView(adView);
+            layout.addView(adContainerView, bannerParams);
+
+            // Load banner ad
+            loadBannerAd();
         }
 
         layout.addView(webView, webViewParams);
@@ -113,6 +145,46 @@ public class MainActivity extends AppCompatActivity {
 
         // Load the main page
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+
+        // Register lifecycle observer for App Open ads
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new DefaultLifecycleObserver() {
+            @Override
+            public void onStart(@NonNull LifecycleOwner owner) {
+                // Show app open ad when app comes to foreground
+                if (!"ca-app-pub-2408628281705149/3832944231".isEmpty()) {
+                    appOpenAdManager.showAdIfAvailable(MainActivity.this);
+                }
+            }
+        });
+    }
+
+    private void loadBannerAd() {
+        if (adView != null) {
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adView.loadAd(adRequest);
+            adView.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    Log.d(TAG, "Banner ad loaded");
+                }
+
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError adError) {
+                    Log.d(TAG, "Banner ad failed to load: " + adError.getMessage());
+                    adView = null;
+                }
+
+                @Override
+                public void onAdClicked() {
+                    Log.d(TAG, "Banner ad clicked");
+                }
+
+                @Override
+                public void onAdImpression() {
+                    Log.d(TAG, "Banner ad impression");
+                }
+            });
+        }
     }
 
     private void requestPermissions() {
@@ -305,8 +377,6 @@ public class MainActivity extends AppCompatActivity {
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
-            // Show interstitial ad on exit
-            StartAppAd.onBackPressed(this);
             super.onBackPressed();
         }
     }
@@ -315,18 +385,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         webView.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         webView.onPause();
+        if (adView != null) {
+            adView.pause();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         webView.destroy();
+        if (adView != null) {
+            adView.destroy();
+            adView = null;
+        }
     }
 
     // JavaScript Interface for native features
@@ -362,6 +442,89 @@ public class MainActivity extends AppCompatActivity {
             if (vibrator != null) {
                 vibrator.vibrate(milliseconds);
             }
+        }
+    }
+
+    // App Open Ad Manager class
+    private class AppOpenAdManager {
+        private static final String LOG_TAG = "AppOpenAdManager";
+        private long loadTime = 0;
+
+        public AppOpenAdManager() {}
+
+        public void loadAd() {
+            if (isLoadingAd || isAdAvailable()) {
+                return;
+            }
+
+            isLoadingAd = true;
+            AppOpenAd.load(
+                MainActivity.this,
+                "ca-app-pub-2408628281705149/3832944231",
+                new AdRequest.Builder().build(),
+                new AppOpenAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull AppOpenAd ad) {
+                        Log.d(LOG_TAG, "App open ad loaded.");
+                        appOpenAd = ad;
+                        isLoadingAd = false;
+                        loadTime = (new Date()).getTime();
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        Log.d(LOG_TAG, "App open ad failed to load with error: " + loadAdError.getMessage());
+                        isLoadingAd = false;
+                    }
+                });
+        }
+
+        public void showAdIfAvailable(@NonNull Activity activity) {
+            if (isShowingAd) {
+                Log.d(TAG, "The app open ad is already showing.");
+                return;
+            }
+
+            if (!isAdAvailable()) {
+                Log.d(TAG, "The app open ad is not ready yet.");
+                loadAd();
+                return;
+            }
+
+            isShowingAd = true;
+            appOpenAd.show(activity);
+            appOpenAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "Ad dismissed fullscreen content.");
+                    appOpenAd = null;
+                    isShowingAd = false;
+                    loadAd();
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                    Log.d(TAG, "Ad failed to show: " + adError.getMessage());
+                    appOpenAd = null;
+                    isShowingAd = false;
+                    loadAd();
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    Log.d(TAG, "Ad showed fullscreen content.");
+                }
+            });
+        }
+
+        private boolean isAdAvailable() {
+            return appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4);
+        }
+
+        private boolean wasLoadTimeLessThanNHoursAgo(long numHours) {
+            long dateDifference = (new Date()).getTime() - loadTime;
+            long numMilliSecondsPerHour = 3600000;
+            return (dateDifference < (numMilliSecondsPerHour * numHours));
         }
     }
 }
