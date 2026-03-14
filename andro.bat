@@ -95,10 +95,13 @@ echo Creating andro.yml...
 (
 echo - title: ""
 echo - version: "1"
-echo - package: "com.mzaini30."
+echo - package: "com.mzaini30"
 echo - icon: ""
-echo - web: "build"
-echo - ads: ""
+echo - web: "html"
+echo - ads:
+echo   - id: ""
+echo   - banner: ""
+echo   - open: ""
 ) > "%CURRENT_DIR%\andro.yml"
 
 if exist "%CURRENT_DIR%\andro.yml" (

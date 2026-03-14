@@ -1,119 +1,24 @@
-Ini error yang kudapat dari adb logcat | findstr com.example.helloworld:
+Pada ./andro.bat:
 
+REM Create andro.yml
+echo Creating andro.yml...
+(
+echo - title: ""
+echo - version: "1"
+echo - package: "com.mzaini30."
+echo - icon: ""
+echo - web: "build"
+echo - ads: ""
+) > "%CURRENT_DIR%\andro.yml"
 
-03-14 23:33:30.466 15976 15976 E AndroidRuntime: Process: com.example.helloworld, PID: 15976
-03-14 23:33:30.466 15976 15976 E AndroidRuntime: Caused by: java.lang.ClassNotFoundException: Didn't find class "androidx.lifecycle.ReportFragment$ActivityInitializationListener" on path: DexPathList[[zip file "/data/app/~~i-QpXzzeAEEor7fdxg-Qug==/com.example.helloworld-QPeftonmpnBE1Lj-Spn2Rw==/base.apk"],nativeLibraryDirectories=[/data/app/~~i-QpXzzeAEEor7fdxg-Qug==/com.example.helloworld-QPeftonmpnBE1Lj-Spn2Rw==/lib/arm64, /system/lib64, /system/system_ext/lib64]]
-03-14 23:33:30.482  1883 12862 W ActivityManager: crash : com.example.helloworld,11017
-03-14 23:33:30.489  1883 12862 W ActivityTaskManager:   Force finishing activity com.example.helloworld/.MainActivity
-03-14 23:33:30.496  1883  6182 D GameManagerService: sendFocusOutConditionally() - mPrevNotiPackage: com.example.helloworld
-03-14 23:33:30.496  1883  6182 D GameManagerService:   sendFocusOutConditionally(). pause signal is needed for com.example.helloworld
-03-14 23:33:30.496  1883  6182 D GameManagerService: notifyFocusInOut(). of pkg: com.example.helloworld, type: 1, isMinimized: false, isTunableApp: false
-03-14 23:33:30.498  1883 12862 D WindowManager: isScreenshotDisabledLocked - win: Window{78975d6 u0 Splash Screen com.example.helloworld}
-03-14 23:33:30.556  1883  2264 I WindowManager: Destroying surface Surface(name=Splash Screen com.example.helloworld)/@0x11497a4 called by com.android.server.wm.WindowStateAnimator.destroySurface:1794 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:765 com.android.server.wm.WindowState.removeImmediately:2679 com.android.server.wm.WindowState.removeIfPossible:2844 com.android.server.wm.WindowState.removeIfPossible:2702 com.android.server.wm.WindowManagerService.removeWindow:2190 com.android.server.wm.Session.remove:199 android.view.ViewRootImpl.dispatchDetachedFromWindow:5715
-03-14 23:33:30.620  1883  2264 D ActivityTaskManager: finishFixedRotationTransform, r=ActivityRecord{8285114 u0 com.example.helloworld/.MainActivity t901 f}}, caller=com.android.server.wm.WindowToken.finishFixedRotationTransform:664 com.android.server.wm.DisplayContent$FixedRotationTransitionListener.onAppTransitionFinishedLocked:7025 com.android.server.wm.AppTransition.notifyAppTransitionFinishedLocked:552 com.android.server.wm.ActivityRecord.onAnimationFinished:7164 com.android.server.wm.ActivityRecord.postApplyAnimation:5013
-03-14 23:33:30.623 19823 16450 I GOS:GOS:EventPublisher: publishEvent()-(type=GAME_PAUSED, pkgName=com.example.helloworld) to (subscriberInfo={})
-03-14 23:33:30.643 12770 12770 I SDHMS:PowerAnomaly:GATHERERAPPERROR: update AppError : uid=11017, pkg=com.example.helloworld, errorType=crash
-03-14 23:33:30.664 12770 12770 I SDHMS:PowerAnomaly:ANALYZERAPPERROR: analyze app error : uid=11017, pkg=com.example.helloworld, appErrorCount=2
-03-14 23:33:30.665  1883  2263 D GameManagerService: notePauseComponent(), received paused-component: com.example.helloworld
-03-14 23:33:30.707  1883  6182 D GameManagerService: sendFocusOutConditionally() - mPrevNotiPackage: com.example.helloworld
-03-14 23:33:30.847  1883  1954 I ActivityManager: Process com.example.helloworld (pid 15976) has died: picked CRE (98,512)
-03-14 23:33:30.853  1883  1954 I ActivityTaskManager: Removing activity ActivityRecord{8285114 u0 com.example.helloworld/.MainActivity t901 f}}(appDied)  from stack callers=com.android.server.wm.ActivityStack$RemoveHistoryRecordsForApp.processActivity:565 com.android.server.wm.ActivityStack$RemoveHistoryRecordsForApp.process:480 com.android.server.wm.ActivityStack.handleAppDied:3395 com.android.server.wm.RootWindowContainer.handleAppDied:3676 com.android.server.wm.ActivityTaskManagerService$LocalService.handleAppDied:8304
-03-14 23:33:30.994  1883  2263 W ActivityTaskManager: Activity top resumed state loss timeout for ActivityRecord{8285114 u0 com.example.helloworld/.MainActivity t-1 f}}
-03-14 23:33:51.516  9369  9369 W AppStartUtils: sendActiveLaunchBroadcast() v.hasOnClickListeners() : true, iconInfo : WorkspaceItemInfo(id=886 type=APP container=desktop targetComponent=ComponentInfo{com.example.helloworld/com.example.helloworld.MainActivity} screen=12 cell(3,4) span(1,1) minSpan(1,1) rank=0 user=UserHandle{0} title=Hello World hidden=0 screenType=0 lowResIcon=false runtimeStatusFlags=384)
-03-14 23:33:51.522  1883  7981 I Pageboost: start alp : com.example.helloworld
-03-14 23:33:51.526  1883  8011 I Pageboost: alp for : com.example.helloworld , 0
-03-14 23:33:51.531  1883  2263 D StorageManagerService: getExternalStorageMountMode: uid=11017 packageName=com.example.helloworld
-03-14 23:33:51.562  1883  2359 I ActivityManager: Start proc 22640:com.example.helloworld/u0a1017 for activelaunch {com.example.helloworld/com.example.helloworld.MainActivity}
-03-14 23:33:51.625  1883  1954 I ActivityTaskManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=com.example.helloworld/.MainActivity bnds=[530,1033][694,1260]} from uid 10100
-03-14 23:33:51.627  1883  1954 D ActivityTaskManager: TaskLaunchParamsModifier:task=null activity=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity display-area-from-source=DefaultTaskDisplayArea@34216148 task-display-area=DefaultTaskDisplayArea@34216148 display-area-windowing-mode=1
-03-14 23:33:51.628  1883  1954 D ActivityTaskManager: TaskLaunchParamsModifier:task=null activity=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t-1} display-area-from-source=DefaultTaskDisplayArea@34216148 task-display-area=DefaultTaskDisplayArea@34216148 display-area-windowing-mode=1 inherit-from-source=fullscreen 
-activity-options-fullscreen=Rect(0, 0 - 0, 0) non-freeform-display maximized-bounds
-03-14 23:33:51.636  1883  1954 D ActivityTaskManager: TaskLaunchParamsModifier:task=Task{f543be4 #902 visible=false type=standard mode=fullscreen translucent=true A=11017:com.example.helloworld U=0 StackId=902 sz=0} activity=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t-1} display-from-task=0 task-display-area=DefaultTaskDisplayArea@34216148 display-area-windowing-mode=1 inherit-from-source=fullscreen activity-options-fullscreen=Rect(0, 0 - 0, 0) non-freeform-display maximized-bounds
-03-14 23:33:51.647  9369  9571 I AppIconSolution: getThemeIconWithBG called with public API, pkg = com.example.helloworld
-03-14 23:33:51.649  9369  9571 I AppIconSolution: start to load, pkg=com.example.helloworld, bg=192-192, dr=875-875, forDefault=true, density=480
-03-14 23:33:51.652  9369  9571 I AppIconSolution: scale down, pkg=com.example.helloworld, dr=216-216, bg=216-216
-03-14 23:33:51.653  9369  9571 I AppIconSolution: getIconScale, pkg=com.example.helloworld, size=216, iconScale=IconScale[alpha=0, scale=1.0, isCrop=true]
-03-14 23:33:51.659  9369  9571 I AppIconSolution: default container[CROP], pkg=com.example.helloworld, bg=216-216, dr=216-216
-03-14 23:33:51.663  1883  1883 I Pageboost: package com.example.helloworld
-03-14 23:33:51.663  1883  8011 I Pageboost: Record App IO : com.example.helloworld pid 22640
-03-14 23:33:51.666  1883  1954 D MARsPolicyManager: onPackageResumedFG pkgName = com.example.helloworld, userId = 0
-03-14 23:33:51.667  9369  9571 I LauncherActivityInfo: packageName: com.example.helloworld, useThemeIcon: false, height: 216, width: 216, density: 480
-03-14 23:33:51.689  1883  2264 D WindowManager: rotationForOrientation, orientationSource=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t902}
-03-14 23:33:51.689  1883  2264 D WindowManager: rotationForOrientation, orientationSource=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t902}
-03-14 23:33:51.696  1883  2264 V WindowManager: Relayout Window{2c40fdc u0 Splash Screen com.example.helloworld}: viewVisibility=0 req=720x1560
-03-14 23:33:51.700  1883  2264 D WindowManager: isScreenshotDisabledLocked - win: Window{2c40fdc u0 Splash Screen com.example.helloworld}
-03-14 23:33:51.703  1883  2264 D WindowManager: makeSurface duration=4 name=Splash Screen com.example.helloworld
-03-14 23:33:51.707  1883  2264 D WindowManager: rotationForOrientation, orientationSource=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t902}
-03-14 23:33:51.717  1883  1954 I ActivityManager: DSS OFF for com.example.helloworld
-03-14 23:33:51.723  1883  1954 D ActivityManager: attachApplicationLocked() app=ProcessRecord{8361438 22640:com.example.helloworld/u0a1017} app.isolatedEntryPoint=null instr2=null
-03-14 23:33:51.724  1883  2264 D WindowManager: finishDrawingWindow: Window{2c40fdc u0 Splash Screen com.example.helloworld} mDrawState=DRAW_PENDING
-03-14 23:33:51.736  1883  1954 D WindowManager: rotationForOrientation, orientationSource=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t902}
-03-14 23:33:51.736  1883  1954 D WindowManager: rotationForOrientation, orientationSource=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t902}
-03-14 23:33:51.739  1883  1954 D WindowManager: rotationForOrientation, orientationSource=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t902}
-03-14 23:33:51.745  1883  1954 D PkgDataHelper: notifyAppCreate(), pkgName: com.example.helloworld, sendRet: true
-03-14 23:33:51.745  1883  6182 D GameManagerService: onLooperPrepared(), msg: MSG_APP_CREATE, pkgName: com.example.helloworld
-03-14 23:33:51.748  1883  6182 D GameManagerService: onLooperPrepared(), msg: MSG_TASK_FOCUSED, focusedComponent: ComponentInfo{com.example.helloworld/com.example.helloworld.MainActivity}
-03-14 23:33:51.748  1883  6182 D GameManagerService:   handleTaskFocused(), pkgName: com.example.helloworld, clsName: com.example.helloworld.MainActivity, userID:0    
-03-14 23:33:51.748  1883  6182 D GameManagerService:   handleResume(). pkgName: com.example.helloworld, isTunableApp: false
-03-14 23:33:51.748  1883  6182 D GameManagerService: notifyFocusInOut(). of pkg: com.example.helloworld, type: 0, isMinimized: false, isTunableApp: false
-03-14 23:33:51.749  1883  1954 D MARsPolicyManager: onPackageResumedFG pkgName = com.example.helloworld, userId = 0
-03-14 23:33:51.753  1883  6182 D GameManagerService:   notifyFocusInOut(). create==true of com.example.helloworld
-03-14 23:33:51.762  1883  2264 D WindowManager: createAnimationAdapter(): container=Task{f543be4 #902 visible=false type=standard mode=fullscreen translucent=true A=11017:com.example.helloworld U=0 StackId=902 sz=1}
-03-14 23:33:51.769  1883  2264 D WindowManager:         Add container=Task{f543be4 #902 visible=false type=standard mode=fullscreen translucent=true A=11017:com.example.helloworld U=0 StackId=902 sz=1}
-03-14 23:33:51.769 22640 22640 D ActivityThread: handleBindApplication()++ app=com.example.helloworld
-03-14 23:33:51.784  1883  2264 I WindowManager: container=Task{f543be4 #902 visible=false type=standard mode=fullscreen translucent=true A=11017:com.example.helloworld U=0 StackId=902 sz=1}
-03-14 23:33:51.786  1883  6182 V ActivityManager: Changed top to 11017,ProcessRecord{8361438 22640:com.example.helloworld/u0a1017}
-03-14 23:33:51.804 19823 22709 I GOS:GOS:EventPublisher: publishEvent()-(type=GAME_RESUMED, pkgName=com.example.helloworld) to (subscriberInfo={})
-03-14 23:33:51.816  1883  2263 I GameSDK@LifeCycle: noteResumeComponent(): package name  : com.example.helloworld
-03-14 23:33:51.821  1883  2263 D SemGameManager: isGamePackage(), pkgName=com.example.helloworld
-03-14 23:33:51.823  1883  2263 D GameManagerService: identifyGamePackage. com.example.helloworld, mCurrentUserId: 0, callerUserId: 0
-03-14 23:33:51.823  1883  2263 D PkgDataHelper: getGamePkgData(). com.example.helloworld
-03-14 23:33:51.829  1883  2263 D GameManagerService: noteResumeComponent(), received resumed-component: com.example.helloworld
-03-14 23:33:51.829  1883  6182 D GameManagerService: onLooperPrepared(), msg: MSG_APP_RESUME, resumeComponent: ComponentInfo{com.example.helloworld/com.example.helloworld.MainActivity}
-03-14 23:33:51.832  1883  2259 D SehCodecSolutionService: Update top [com.example.helloworld]
-03-14 23:33:51.833  1883  7370 D PkgPredictorService: com.example.helloworld go to foreground!
-03-14 23:33:51.834  1883  7370 D PkgPredictorService: previous pkgs: com.example.helloworld,com.example.helloworld,com.example.helloworld running pkg: com.example.helloworld, uid: 0 is system: false
-03-14 23:33:51.834  1883  7370 D PkgPredictorService-Collector:  (hour:23 day:7 previous:[com.example.helloworld, com.example.helloworld, com.example.helloworld] activityName:unknown running:com.example.helloworld userId:0 screenOrientation:0 wifi:1 bt:0 predictTime:6 apkVersion:1 consumeTime:-1 preloaded:false>)
-03-14 23:33:51.834  1883  7370 D PkgPredictorService-NapPreloadController: User using: com.example.helloworld
-03-14 23:33:52.012  1883  7296 W SemWifiTransportLayerUtils: getApplicationCategory - IOException com.example.helloworld
-03-14 23:33:52.012  1883  7296 W System.err: java.io.FileNotFoundException: https://play.google.com/store/apps/details?id=com.example.helloworld&hl=en
-03-14 23:33:52.063  1883  1954 D ActivityTaskManager: finishFixedRotationTransform, r=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t902}, caller=com.android.server.wm.WindowToken.finishFixedRotationTransform:664 com.android.server.wm.DisplayContent$FixedRotationTransitionListener.onAppTransitionFinishedLocked:7025 
-com.android.server.wm.AppTransition.notifyAppTransitionFinishedLocked:552 com.android.server.wm.ActivityRecord.onAnimationFinished:7164 com.android.server.wm.WindowContainer.doAnimationFinished:2626 
-03-14 23:33:52.068  1883  1954 D WindowManager:         container=Task{f543be4 #902 visible=false type=standard mode=fullscreen translucent=true A=11017:com.example.helloworld U=0 StackId=902 sz=1}
-03-14 23:33:52.566 22640 22640 D LoadedApk: LoadedApk::makeApplication() appContext=android.app.ContextImpl@6178c78 appContext.mOpPackageName=com.example.helloworld appContext.mBasePackageName=com.example.helloworld appContext.mPackageInfo=android.app.LoadedApk@1a38f51
-03-14 23:33:52.748 22640 22640 E AndroidRuntime: Process: com.example.helloworld, PID: 22640
-03-14 23:33:52.748 22640 22640 E AndroidRuntime: Caused by: java.lang.ClassNotFoundException: Didn't find class "androidx.lifecycle.ReportFragment$ActivityInitializationListener" on path: DexPathList[[zip file "/data/app/~~i-QpXzzeAEEor7fdxg-Qug==/com.example.helloworld-QPeftonmpnBE1Lj-Spn2Rw==/base.apk"],nativeLibraryDirectories=[/data/app/~~i-QpXzzeAEEor7fdxg-Qug==/com.example.helloworld-QPeftonmpnBE1Lj-Spn2Rw==/lib/arm64, /system/lib64, /system/system_ext/lib64]]
-03-14 23:33:52.758  1883  1954 W ActivityManager: crash : com.example.helloworld,11017
-03-14 23:33:52.760  1883  1954 W ActivityTaskManager:   Force finishing activity com.example.helloworld/.MainActivity
-03-14 23:33:52.766  1883  6182 D GameManagerService: sendFocusOutConditionally() - mPrevNotiPackage: com.example.helloworld
-03-14 23:33:52.766  1883  6182 D GameManagerService:   sendFocusOutConditionally(). pause signal is needed for com.example.helloworld
-03-14 23:33:52.766  1883  6182 D GameManagerService: notifyFocusInOut(). of pkg: com.example.helloworld, type: 1, isMinimized: false, isTunableApp: false
-03-14 23:33:52.768  1883  1954 D WindowManager: isScreenshotDisabledLocked - win: Window{2c40fdc u0 Splash Screen com.example.helloworld}
-03-14 23:33:52.817  1883  2264 I WindowManager: Destroying surface Surface(name=Splash Screen com.example.helloworld)/@0xebb06e6 called by com.android.server.wm.WindowStateAnimator.destroySurface:1794 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:765 com.android.server.wm.WindowState.removeImmediately:2679 com.android.server.wm.WindowState.removeIfPossible:2844 com.android.server.wm.WindowState.removeIfPossible:2702 com.android.server.wm.WindowManagerService.removeWindow:2190 com.android.server.wm.Session.remove:199 android.view.ViewRootImpl.dispatchDetachedFromWindow:5715 
-03-14 23:33:52.863  1883  2264 D ActivityTaskManager: finishFixedRotationTransform, r=ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t902 f}}, caller=com.android.server.wm.WindowToken.finishFixedRotationTransform:664 com.android.server.wm.DisplayContent$FixedRotationTransitionListener.onAppTransitionFinishedLocked:7025 com.android.server.wm.AppTransition.notifyAppTransitionFinishedLocked:552 com.android.server.wm.ActivityRecord.onAnimationFinished:7164 com.android.server.wm.ActivityRecord.postApplyAnimation:5013 
-03-14 23:33:52.960  1883  2263 D GameManagerService: notePauseComponent(), received paused-component: com.example.helloworld
-03-14 23:33:52.976 19823 23016 I GOS:GOS:EventPublisher: publishEvent()-(type=GAME_PAUSED, pkgName=com.example.helloworld) to (subscriberInfo={})
-03-14 23:33:52.985  1883  6182 D GameManagerService: sendFocusOutConditionally() - mPrevNotiPackage: com.example.helloworld
-03-14 23:33:53.294  1883  2259 V WindowManager: Changing focus from Window{cfe60fa u0 com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity} to Window{77e23d u0 Application Error: com.example.helloworld} displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:567 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6316 com.android.server.wm.WindowManagerService.addWindow:1965 com.android.server.wm.Session.addToDisplayAsUser:182 
-03-14 23:33:53.305  1883  2263 W ActivityTaskManager: Activity top resumed state loss timeout for ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t902 f}}
-03-14 23:33:53.339  1883  2259 V WindowManager: Relayout Window{77e23d u0 Application Error: com.example.helloworld}: viewVisibility=0 req=719x371
-03-14 23:33:53.343  1883  2259 D WindowManager: isScreenshotDisabledLocked - win: Window{77e23d u0 Application Error: com.example.helloworld}
-03-14 23:33:53.346  1883  2259 D WindowManager: makeSurface duration=2 name=Application Error: com.example.helloworld
-03-14 23:33:53.444  1883  2259 D WindowManager: finishDrawingWindow: Window{77e23d u0 Application Error: com.example.helloworld} mDrawState=DRAW_PENDING
-03-14 23:33:53.450  1883  2264 I WindowManager: Reparenting to leash, surface=Surface(name=77e23d Application Error: com.example.helloworld)/@0x6a655af, leashParent=Surface(name=WindowToken{c86e794 android.view.ViewRootImpl$W@639dfe7})/@0x747fdbc
-03-14 23:33:53.452  1883  2264 D WindowManager: makeSurface duration=1 leash=Surface(name=Surface(name=77e23d Application Error: com.example.helloworld)/@0x6a655af - animation-leash)/@0xc9dcb
-03-14 23:33:53.599 12770 12770 I SDHMS:PowerAnomaly:GATHERERAPPERROR: update AppError : uid=11017, pkg=com.example.helloworld, errorType=crash
-03-14 23:33:53.615 12770 12770 I SDHMS:PowerAnomaly:ANALYZERAPPERROR: analyze app error : uid=11017, pkg=com.example.helloworld, appErrorCount=3
-03-14 23:33:53.759  1883  2264 I WindowManager: Reparenting to original parent: Surface(name=WindowToken{c86e794 android.view.ViewRootImpl$W@639dfe7})/@0x747fdbc, destroy=true, surface=Surface(name=77e23d Application Error: com.example.helloworld)/@0x6a655af
-03-14 23:33:55.613  1883  1954 W WindowManager:   Force finishing activity com.example.helloworld/.MainActivity
-03-14 23:33:55.615  1883  1954 I ActivityTaskManager: Removing activity ActivityRecord{b719377 u0 com.example.helloworld/.MainActivity t902 f}}(finish-imm:handleAppCrashed hadNoApp)  from stack callers=com.android.server.wm.ActivityRecord.destroyImmediately:3521 com.android.server.wm.ActivityRecord.destroyIfPossible:3390 com.android.server.wm.RootWindowContainer.handleAppCrash:3259 com.android.server.wm.RootWindowContainer.lambda$0ZupnQyxl7yZKgMmf2zwvykG50s:0 com.android.server.wm.-$$Lambda$RootWindowContainer$0ZupnQyxl7yZKgMmf2zwvykG50s.accept:4
-03-14 23:33:55.632  1883  2259 I WindowManager: Reparenting to leash, surface=Surface(name=77e23d Application Error: com.example.helloworld)/@0x6a655af, leashParent=Surface(name=WindowToken{c86e794 android.view.ViewRootImpl$W@639dfe7})/@0x747fdbc
-03-14 23:33:55.633  1883  2259 D WindowManager: makeSurface duration=1 leash=Surface(name=Surface(name=77e23d Application Error: com.example.helloworld)/@0x6a655af - animation-leash)/@0xe73fbc0
-03-14 23:33:55.635  1883  2259 V WindowManager: removeIfPossible 2, Window{77e23d u0 Application Error: com.example.helloworld}: mAnimatingExit=true caller=com.android.server.wm.WindowState.removeIfPossible:2702 com.android.server.wm.WindowManagerService.removeWindow:2190 com.android.server.wm.Session.remove:199 android.view.ViewRootImpl.dispatchDetachedFromWindow:5715 android.view.ViewRootImpl.doDie:9337
-03-14 23:33:55.637  1883  2259 V WindowManager: Changing focus from Window{77e23d u0 Application Error: com.example.helloworld EXITING} to Window{cfe60fa u0 com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity} displayId=0 Callers=com.android.server.wm.RootWindowContainer.updateFocusedWindowLocked:567 com.android.server.wm.WindowManagerService.updateFocusedWindowLocked:6316 com.android.server.wm.WindowState.setupWindowForRemoveOnExit:2867 com.android.server.wm.WindowState.removeIfPossible:2836
-03-14 23:33:55.654  1883  1954 I ActivityManager: Killing 22640:com.example.helloworld/u0a1017 (adj 850): crash
-03-14 23:33:55.959  1883  2264 I WindowManager: Reparenting to original parent: Surface(name=WindowToken{c86e794 android.view.ViewRootImpl$W@639dfe7})/@0x747fdbc, destroy=true, surface=Surface(name=77e23d Application Error: com.example.helloworld)/@0x6a655af
-03-14 23:33:55.980  1883  2264 I WindowManager: Destroying surface Surface(name=Application Error: com.example.helloworld)/@0x264f933 called by com.android.server.wm.WindowStateAnimator.destroySurface:1794 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:765 com.android.server.wm.WindowState.destroySurfaceUnchecked:3932 com.android.server.wm.RootWindowContainer.performSurfacePlacementNoTrace:1112 com.android.server.wm.RootWindowContainer.performSurfacePlacement:959 com.android.server.wm.WindowSurfacePlacer.performSurfacePlacementLoop:182 com.android.server.wm.WindowSurfacePlacer.performSurfacePlacement:131 com.android.server.wm.WindowSurfacePlacer.performSurfacePlacement:120
-03-14 23:34:04.299  1883  8011 I Pageboost: db update :com.example.helloworld ret 1
-03-14 23:34:34.062  3329  3578 W Finsky  : [6545] VerifyApps: APK Analysis scan timed out for com.example.helloworld.
-03-14 23:34:34.062  3329  3578 I Finsky  : [6545] VerifyApps: APK Analysis scan finished for com.example.helloworld. Verdict: SAFE
+Itu kan harusnya mengikuti struktur seperti ini:
+
+- title: ""
+- version: "1"
+- package: "com.mzaini30"
+- icon: ""
+- web: "html"
+- ads:
+  - id: ""
+  - banner: ""
+  - open: ""
