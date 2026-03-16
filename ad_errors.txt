@@ -1,0 +1,62 @@
+03-16 12:15:34.952   713   769 E ANDR-PERF-UTIL: Failed to update node /proc/9217/sched_boost with value 3
+03-16 12:15:34.952   713   769 E ANDR-PERF-RESOURCEQS: Failed to apply optimization [3, 32]
+03-16 12:15:35.052  9217  9217 D MainActivity: Mobile Ads SDK initialized: {com.google.android.gms.ads.MobileAds=com.google.android.gms.internal.ads.zzbrc@cc5d038}
+03-16 12:15:35.298  9217 10820 I DynamiteModule: Considering local module com.google.android.gms.ads.dynamite:0 and remote module com.google.android.gms.ads.dynamite:260480602
+03-16 12:15:35.298  9217 10820 I DynamiteModule: Selected remote version of com.google.android.gms.ads.dynamite, version >= 260480602
+03-16 12:15:35.298  9217 10820 V DynamiteModule: Dynamite loader version >= 2, using loadModule2NoCrashUtils
+03-16 12:15:35.362  9217 10820 I Ads     : Use RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("8DB14B952ED03EDC510DFA8262C86F71")) to get test ads on this device.
+03-16 12:15:35.479   713   769 E ANDR-PERF-UTIL: Failed to update node /proc/29963/sched_boost with value 3
+03-16 12:15:35.479   713   769 E ANDR-PERF-RESOURCEQS: Failed to apply optimization [3, 32]
+03-16 12:15:35.487  9217 10820 W ServiceBindIntentUtils: Dynamic lookup for intent failed for action: com.google.android.gms.ads.service.CACHE
+03-16 12:15:35.517 16430 16430 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.ads.service.CACHE pkg=com.google.android.gms }
+03-16 12:15:35.517 16430 16430 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.ads.service.CACHE pkg=com.google.android.gms }
+03-16 12:15:35.532  9217 10820 I DynamiteModule: Considering local module com.google.android.gms.ads.dynamite:0 and remote module com.google.android.gms.ads.dynamite:260480602
+03-16 12:15:35.532  9217 10820 I DynamiteModule: Selected remote version of com.google.android.gms.ads.dynamite, version >= 260480602
+03-16 12:15:35.532  9217 10820 V DynamiteModule: Dynamite loader version >= 2, using loadModule2NoCrashUtils
+03-16 12:15:35.545   713   769 E ANDR-PERF-RESOURCEQS: Failed to apply optimization [3, 11]
+03-16 12:15:35.554  9217 10820 I Ads     : Use RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("8DB14B952ED03EDC510DFA8262C86F71")) to get test ads on this device.
+03-16 12:15:35.562 16430 16430 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.safebrowsing.SafeBrowsingService.START dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
+03-16 12:15:35.633  9217 31543 W Ads     : Not retrying to fetch app settings
+03-16 12:15:35.635  9217 31584 W ServiceBindIntentUtils: Dynamic lookup for intent failed for action: com.google.android.gms.ads.service.START
+03-16 12:15:35.645 16430 16430 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.ads.service.START pkg=com.google.android.gms }
+03-16 12:15:35.645 16430 16430 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.ads.service.START pkg=com.google.android.gms }
+03-16 12:15:35.656 16430 16430 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.ads.identifier.service.EVENT_ATTESTATION dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
+03-16 12:15:35.656 16430 16430 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.ads.identifier.service.EVENT_ATTESTATION dat=chimera-action: cmp=com.google.android.gms/.chimera.GmsBoundBrokerService }
+03-16 12:15:35.750  1883  7370 I ChimeraAggressivePolicyHandler: executePolicy() - prepareForTrigger fails
+03-16 12:15:36.038 16430 31635 E Ads     : Error waiting for future.
+03-16 12:15:36.038 16430 31635 E Ads     : java.util.concurrent.TimeoutException
+03-16 12:15:36.038 16430 31635 E Ads     : 	at java.util.concurrent.FutureTask.get(FutureTask.java:206)
+03-16 12:15:36.038 16430 31635 E Ads     : 	at com.google.android.gms.ads.nonagon.signals.gmscore.p.call(:com.google.android.gms@260931022@26.09.31 (150400-877989800):47)
+03-16 12:15:36.038 16430 31635 E Ads     : 	at fxfv.a(:com.google.android.gms@260931022@26.09.31 (150400-877989800):3)
+03-16 12:15:36.038 16430 31635 E Ads     : 	at fxev.run(:com.google.android.gms@260931022@26.09.31 (150400-877989800):19)
+03-16 12:15:36.038 16430 31635 E Ads     : 	at fxfw.run(:com.google.android.gms@260931022@26.09.31 (150400-877989800):5)
+03-16 12:15:36.038 16430 31635 E Ads     : 	at beua.c(:com.google.android.gms@260931022@26.09.31 (150400-877989800):50)
+03-16 12:15:36.038 16430 31635 E Ads     : 	at beua.run(:com.google.android.gms@260931022@26.09.31 (150400-877989800):73)
+03-16 12:15:36.038 16430 31635 E Ads     : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)
+03-16 12:15:36.038 16430 31635 E Ads     : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)
+03-16 12:15:36.038 16430 31635 E Ads     : 	at bezr.run(:com.google.android.gms@260931022@26.09.31 (150400-877989800):8)
+03-16 12:15:36.038 16430 31635 E Ads     : 	at java.lang.Thread.run(Thread.java:923)
+03-16 12:15:36.088   597 31707 E Netd    : To use pid in case SEC_PRODUCT_FEATURE_KNOX_SUPPORT_NPA is false, to remove build error (unused variable)
+03-16 12:15:36.138   597 31721 E Netd    : To use pid in case SEC_PRODUCT_FEATURE_KNOX_SUPPORT_NPA is false, to remove build error (unused variable)
+03-16 12:15:36.163  1883  7474 E NetdEventListenerService: DNS failed (11022) : 7
+03-16 12:15:36.169   597 31732 E Netd    : To use pid in case SEC_PRODUCT_FEATURE_KNOX_SUPPORT_NPA is false, to remove build error (unused variable)
+03-16 12:15:36.180  1883  7474 E NetdEventListenerService: DNS failed (11022) : 7
+03-16 12:15:36.186 16430 15142 I Ads     : SDK version: afma-sdk-a-v260480999.260480000.1
+03-16 12:15:36.187 16430 15142 I Ads     : HTTP timeout: 60000 milliseconds.
+03-16 12:15:36.218 16430 31631 I Ads     : SDK version: afma-sdk-a-v260480999.260480000.1
+03-16 12:15:36.218 16430 31631 I Ads     : HTTP timeout: 60000 milliseconds.
+03-16 12:15:36.363 16430 31635 E LoadedApk: Exception : java.lang.NullPointerException: Attempt to invoke virtual method 'boolean android.os.Looper.isPerfLogEnable()' on a null object reference
+03-16 12:15:36.363 16430 31635 E LoadedApk: Exception : java.lang.NullPointerException: Attempt to invoke virtual method 'boolean android.os.Looper.isPerfLogEnable()' on a null object reference
+03-16 12:15:36.486 16430 15142 W Ads     : Received error HTTP response code: 403
+03-16 12:15:36.488 16430 31631 W Ads     : Received error HTTP response code: 403
+03-16 12:15:36.531  9217  9217 D MainActivity: Banner ad failed to load: Received error HTTP response code: 403
+03-16 12:15:36.532  9217  9217 I Ads     : Ad failed to load : 3
+03-16 12:15:36.540  9217  9217 D AppOpenAdManager: App open ad failed to load with error: Received error HTTP response code: 403
+03-16 12:15:36.541  9217  9217 I Ads     : Ad failed to load : 3
+03-16 12:15:36.541 16430 16448 W System  : A resource failed to call end. 
+03-16 12:15:36.541 16430 16448 W System  : A resource failed to call end. 
+03-16 12:15:41.542 16430 16430 D BoundBrokerSvc: onUnbind: Intent { act=com.google.android.gms.ads.service.START pkg=com.google.android.gms }
+03-16 12:15:41.994  1883  2535 W ProcessCpuTracker: Failed to stat(/proc/1513): android.system.ErrnoException: stat failed: ENOENT (No such file or directory)
+03-16 12:15:42.171  9369  9571 I BadgeCountUpdaterImpl: reload badge without refresh
+03-16 12:15:42.190  9369  9571 I BadgeCache: reloadBadge size : 2
+03-16 12:15:42.301  8236  8236 D InterruptionStateProvider:  no Heads up : edgelighting enabled app. -1|com.android.systemui|2131362956|charging_state|10064

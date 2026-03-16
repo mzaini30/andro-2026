@@ -1,0 +1,9 @@
+--------- beginning of main
+03-16 12:15:11.352 25384 25384 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+03-16 12:15:11.388 25384 25384 I AndroidRuntime: Using default boot image
+03-16 12:15:11.388 25384 25384 I AndroidRuntime: Leaving lock profiling enabled
+03-16 12:15:11.399 25384 25384 D AndroidRuntime: addProductProperty: pBrand1 is not null
+03-16 12:15:11.399 25384 25384 D AndroidRuntime: addProductProperty: not brand or 7
+--------- beginning of system
+03-16 12:15:12.157 25384 25384 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+03-16 12:15:12.682 25384 25384 I AndroidRuntime: VM exiting with result code 0.

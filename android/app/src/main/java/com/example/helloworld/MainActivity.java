@@ -14,7 +14,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.GeolocationPermissions;
+// import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
@@ -55,6 +55,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.google.android.gms.ads.RequestConfiguration;
+import java.util.Arrays;
+import android.os.Handler;
+
 public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
@@ -74,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
         Manifest.permission.CAMERA,
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
+        // Manifest.permission.ACCESS_FINE_LOCATION,
+        // Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.RECORD_AUDIO,
         Manifest.permission.BLUETOOTH,
         Manifest.permission.BLUETOOTH_CONNECT,
@@ -88,6 +92,15 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // Initialize Google Mobile Ads SDK
+            List<String> testDeviceIds = Arrays.asList("8DB14B952ED03EDC510DFA8262C86F71");
+
+            RequestConfiguration configuration =
+                new RequestConfiguration.Builder()
+                    .setTestDeviceIds(testDeviceIds)
+                    .build();
+
+            MobileAds.setRequestConfiguration(configuration);
+
             MobileAds.initialize(this, initializationStatus -> {
                 Log.d(TAG, "Mobile Ads SDK initialized: " + initializationStatus.getAdapterStatusMap());
             });
@@ -100,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         appOpenAdManager = new AppOpenAdManager();
 
         // Request permissions
-        requestPermissions();
+        // requestPermissions();
 
         // Create Layout
         RelativeLayout layout = new RelativeLayout(this);
@@ -115,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 RelativeLayout.LayoutParams.MATCH_PARENT);
 
         // Create AdMob Banner
-        if (!"ca-app-pub-2408628281705149/3796086104".isEmpty()) {
+        if (!"ca-app-pub-3940256099942544/6300978111".isEmpty()) {
             FrameLayout adContainerView = new FrameLayout(this);
             adContainerView.setId(View.generateViewId());
             RelativeLayout.LayoutParams bannerParams = new RelativeLayout.LayoutParams(
@@ -129,14 +142,17 @@ public class MainActivity extends AppCompatActivity {
 
             // Create AdView
             adView = new AdView(this);
-            adView.setAdUnitId("ca-app-pub-2408628281705149/3796086104");
-            adView.setAdSize(AdSize.getLargeAnchoredAdaptiveBannerAdSize(this, AdSize.FULL_WIDTH));
+            adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+            // adView.setAdSize(AdSize.getLargeAnchoredAdaptiveBannerAdSize(this, AdSize.FULL_WIDTH));
+            adView.setAdSize(AdSize.BANNER);
 
             adContainerView.addView(adView);
             layout.addView(adContainerView, bannerParams);
 
             // Load banner ad
-            loadBannerAd();
+            new android.os.Handler().postDelayed(() -> {
+                loadBannerAd();
+            }, 2000);
         }
 
         layout.addView(webView, webViewParams);
@@ -149,24 +165,30 @@ public class MainActivity extends AppCompatActivity {
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
 
         // Load app open ad (will show on next app foreground)
-        if (!"ca-app-pub-2408628281705149/3832944231".isEmpty()) {
+        /*
+        if (!"ca-app-pub-3940256099942544/9257395921".isEmpty()) {
             try {
                 appOpenAdManager.loadAd();
             } catch (Exception e) {
                 Log.e(TAG, "Error loading app open ad", e);
             }
         }
+        */
     }
 
     private void loadBannerAd() {
         if (adView != null) {
             try {
                 AdRequest adRequest = new AdRequest.Builder().build();
-                adView.loadAd(adRequest);
                 adView.setAdListener(new AdListener() {
                     @Override
                     public void onAdLoaded() {
                         Log.d(TAG, "Banner ad loaded");
+
+                        // Setelah banner sukses, baru load app open ad
+                        if (appOpenAdManager != null) {
+                            appOpenAdManager.loadAd();
+                        }
                     }
 
                     @Override
@@ -185,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "Banner ad impression");
                     }
                 });
+                adView.loadAd(adRequest);
             } catch (Exception e) {
                 Log.e(TAG, "Error loading banner ad", e);
                 adView = null;
@@ -253,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setDomStorageEnabled(true);
 
         // Enable geolocation
-        webSettings.setGeolocationEnabled(true);
+        // webSettings.setGeolocationEnabled(true);
 
         // Enable zoom
         webSettings.setSupportZoom(true);
@@ -301,11 +324,11 @@ public class MainActivity extends AppCompatActivity {
         // WebChromeClient for advanced features
         webView.setWebChromeClient(new WebChromeClient() {
             // Geolocation permissions
-            @Override
-            public void onGeolocationPermissionsShowPrompt(String origin,
-                    GeolocationPermissions.Callback callback) {
-                callback.invoke(origin, true, false);
-            }
+            // @Override
+            // public void onGeolocationPermissionsShowPrompt(String origin,
+            // GeolocationPermissions.Callback callback) {
+            // callback.invoke(origin, true, false);
+            // }
 
             // File upload handling
             @Override
@@ -389,6 +412,7 @@ public class MainActivity extends AppCompatActivity {
         if (adView != null) {
             adView.resume();
         }
+        appOpenAdManager.showAdIfAvailable(this);
     }
 
     @Override
@@ -462,7 +486,7 @@ public class MainActivity extends AppCompatActivity {
             isLoadingAd = true;
             AppOpenAd.load(
                 MainActivity.this,
-                "ca-app-pub-2408628281705149/3832944231",
+                "ca-app-pub-3940256099942544/9257395921",
                 new AdRequest.Builder().build(),
                 new AppOpenAdLoadCallback() {
                     @Override

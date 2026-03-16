@@ -327,6 +327,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.google.android.gms.ads.RequestConfiguration;
+import java.util.Arrays;
+import android.os.Handler;
+
 public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
@@ -360,6 +364,15 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // Initialize Google Mobile Ads SDK
+            List<String> testDeviceIds = Arrays.asList("8DB14B952ED03EDC510DFA8262C86F71");
+
+            RequestConfiguration configuration =
+                new RequestConfiguration.Builder()
+                    .setTestDeviceIds(testDeviceIds)
+                    .build();
+
+            MobileAds.setRequestConfiguration(configuration);
+
             MobileAds.initialize(this, initializationStatus -> {
                 Log.d(TAG, "Mobile Ads SDK initialized: " + initializationStatus.getAdapterStatusMap());
             });
@@ -372,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
         appOpenAdManager = new AppOpenAdManager();
 
         // Request permissions
-        requestPermissions();
+        // requestPermissions();
 
         // Create Layout
         RelativeLayout layout = new RelativeLayout(this);
@@ -402,13 +415,16 @@ public class MainActivity extends AppCompatActivity {
             // Create AdView
             adView = new AdView(this);
             adView.setAdUnitId("$ads_banner");
-            adView.setAdSize(AdSize.getLargeAnchoredAdaptiveBannerAdSize(this, AdSize.FULL_WIDTH));
+            // adView.setAdSize(AdSize.getLargeAnchoredAdaptiveBannerAdSize(this, AdSize.FULL_WIDTH));
+            adView.setAdSize(AdSize.BANNER);
 
             adContainerView.addView(adView);
             layout.addView(adContainerView, bannerParams);
 
             // Load banner ad
-            loadBannerAd();
+            new android.os.Handler().postDelayed(() -> {
+                loadBannerAd();
+            }, 2000);
         }
 
         layout.addView(webView, webViewParams);
@@ -421,6 +437,7 @@ public class MainActivity extends AppCompatActivity {
         webView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
 
         // Load app open ad (will show on next app foreground)
+        /*
         if (!"$ads_open".isEmpty()) {
             try {
                 appOpenAdManager.loadAd();
@@ -428,17 +445,22 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "Error loading app open ad", e);
             }
         }
+        */
     }
 
     private void loadBannerAd() {
         if (adView != null) {
             try {
                 AdRequest adRequest = new AdRequest.Builder().build();
-                adView.loadAd(adRequest);
                 adView.setAdListener(new AdListener() {
                     @Override
                     public void onAdLoaded() {
                         Log.d(TAG, "Banner ad loaded");
+
+                        // Setelah banner sukses, baru load app open ad
+                        if (appOpenAdManager != null) {
+                            appOpenAdManager.loadAd();
+                        }
                     }
 
                     @Override
@@ -457,6 +479,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "Banner ad impression");
                     }
                 });
+                adView.loadAd(adRequest);
             } catch (Exception e) {
                 Log.e(TAG, "Error loading banner ad", e);
                 adView = null;
@@ -661,6 +684,7 @@ public class MainActivity extends AppCompatActivity {
         if (adView != null) {
             adView.resume();
         }
+        appOpenAdManager.showAdIfAvailable(this);
     }
 
     @Override
