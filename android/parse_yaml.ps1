@@ -11,6 +11,7 @@ $web = ''
 $ads_id = ''
 $ads_banner = ''
 $ads_open = ''
+$ads_rewarded = ''
 
 $in_ads_section = $false
 
@@ -47,6 +48,9 @@ foreach ($line in $yaml -split "`n") {
     elseif ($in_ads_section -and $line -match '^\s*-\s*open:\s*["\x27]?(.*?)["\x27]?\s*$') {
         $ads_open = $matches[1].Trim()
     }
+    elseif ($in_ads_section -and $line -match '^\s*-\s*rewarded:\s*["\x27]?(.*?)["\x27]?\s*$') {
+        $ads_rewarded = $matches[1].Trim()
+    }
     elseif ($line -match '^\s*-\s*\w+:') {
         $in_ads_section = $false
     }
@@ -60,3 +64,4 @@ Write-Output "APP_WEB=$web"
 Write-Output "APP_ADS_ID=$ads_id"
 Write-Output "APP_ADS_BANNER=$ads_banner"
 Write-Output "APP_ADS_OPEN=$ads_open"
+Write-Output "APP_ADS_REWARDED=$ads_rewarded"

@@ -1,1 +1,1 @@
-./contoh/MainActivity.java, ./contoh/AppOpenManager.java, ./contoh/JavaScriptInterface.java adalah contoh kode aplikasi Android yang berhasil memanggil iklan. Jadi, kamu edit kode project ini menyontek dengan kode tersebut
+Pelajari kenapa aplikasi dengan id com.example.helloworld yang di  HP tidak bisa  dibuka. Cek dengan adb
