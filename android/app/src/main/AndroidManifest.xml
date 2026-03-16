@@ -55,7 +55,7 @@
         <!-- Start.io SDK Configuration -->
         <meta-data
             android:name="com.startapp.sdk.APPLICATION_ID"
-            android:value="" />
+            android:value="202843390" />
         <meta-data
             android:name="com.startapp.sdk.RETURN_ADS_ENABLED"
             android:value="true" />
@@ -75,7 +75,7 @@
         <!-- File Provider for file uploads/downloads -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:authorities="\.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

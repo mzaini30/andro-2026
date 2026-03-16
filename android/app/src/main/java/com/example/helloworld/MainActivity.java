@@ -69,9 +69,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Initialize Start.io SDK
-        String adsId = "";
-        if (!adsId.isEmpty()) {
-            StartAppSDK.init(this, adsId, true);
+        if (!"202843390".isEmpty()) {
+            StartAppSDK.init(this, "202843390", true);
         }
 
         // Request permissions
@@ -89,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
 
-        if (!adsId.isEmpty()) {
+        if (!"202843390".isEmpty()) {
             // Create Banner
             Banner startAppBanner = new Banner(this);
             startAppBanner.setId(View.generateViewId());

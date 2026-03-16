@@ -76,10 +76,10 @@ android {
     }
 
     buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
+        // release {
+        //     minifyEnabled true
+        //     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        // }
         debug {
             minifyEnabled false
         }
@@ -443,10 +443,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            if (!allGranted) {
-                Toast.makeText(this, "Some permissions were denied. Some features may not work.",
-                    Toast.LENGTH_LONG).show();
-            }
         }
     }
 
