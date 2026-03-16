@@ -226,10 +226,12 @@ Android.vibrate(1000)
 - `README.md` - User-facing documentation
 - `perintah.txt` - Original requirements (in Indonesian)
 
-## Iklan 
+## Iklan
 
-- Untuk iklan, hanya gunakan Admob
-- Untuk cara menggunakan Admob, cek ./Admob/Persiapan.txt, ./Admob/Banner.txt, ./Admob/AppOpen.txt
+- Menggunakan Start.io (formerly StartApp) untuk monetisasi iklan
+- Banner ads ditampilkan di bagian bawah
+- Interstitial ads ditampilkan saat tombol back ditekat
+- Lihat `./android/ai/ads.txt` untuk dokumentasi lengkap Start.io SDK
 
 ## Update Generate Project
 

@@ -98,11 +98,7 @@ echo - version: "1"
 echo - package: "com.mzaini30."
 echo - icon: ""
 echo - web: "html"
-echo - ads:
-echo   - id: ""
-echo   - banner: ""
-echo   - open: ""
-echo   - rewarded: ""
+echo - ads: ""
 ) > "%CURRENT_DIR%\andro.yml"
 
 if exist "%CURRENT_DIR%\andro.yml" (
@@ -204,10 +200,7 @@ echo   Version:    %APP_VERSION%
 echo   Package:    %APP_PACKAGE%
 echo   Icon:       %APP_ICON%
 echo   Web:        %APP_WEB%
-echo   AdMob ID:   %APP_ADS_ID%
-echo   Banner ID:  %APP_ADS_BANNER%
-echo   Open ID:    %APP_ADS_OPEN%
-echo   Rewarded ID: %APP_ADS_REWARDED%
+echo   Start.io ID: %APP_ADS%
 echo.
 
 REM Check Java
@@ -305,7 +298,7 @@ if not exist "%ANDROID_DIR%\keystore.jks" (
 
 REM Generate source files using PowerShell
 echo Generating source files...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "& '%SCRIPT_ANDROID_DIR%\generate_project.ps1' -title '%APP_TITLE%' -version '%APP_VERSION%' -package '%APP_PACKAGE%' -ads_id '%APP_ADS_ID%' -ads_banner '%APP_ADS_BANNER%' -ads_open '%APP_ADS_OPEN%' -ads_rewarded '%APP_ADS_REWARDED%' -output '%ANDROID_DIR%'"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& '%SCRIPT_ANDROID_DIR%\generate_project.ps1' -title '%APP_TITLE%' -version '%APP_VERSION%' -package '%APP_PACKAGE%' -icon '%APP_ICON%' -web '%APP_WEB%' -ads '%APP_ADS%' -output '%ANDROID_DIR%'"
 
 if errorlevel 1 (
     echo ERROR: Failed to generate source files.

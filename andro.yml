@@ -3,8 +3,4 @@
 - package: "com.example.helloworld"
 - icon: "round.png"
 - web: "html"
-- ads:
-  - id: "ca-app-pub-3940256099942544~3347511713"
-  - banner: "ca-app-pub-3940256099942544/6300978111"
-  - open: "ca-app-pub-3940256099942544/3419835294"
-  - rewarded: "ca-app-pub-3940256099942544/5224354917"
+- ads: ""
