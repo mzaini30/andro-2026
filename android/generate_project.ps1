@@ -75,11 +75,20 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            storeFile file("keystore.jks")
+            storePassword "0809894kali"
+            keyAlias "andro"
+            keyPassword "0809894kali"
+        }
+    }
+
     buildTypes {
-        // release {
-        //     minifyEnabled true
-        //     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        // }
+        release {
+             minifyEnabled true
+             signingConfig signingConfigs.release
+        }
         debug {
             minifyEnabled false
         }
