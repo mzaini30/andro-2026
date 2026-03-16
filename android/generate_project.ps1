@@ -137,10 +137,6 @@ $androidManifest = @"
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" tools:node="remove"/>
 
-    <!-- Location/GPS -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <!-- Camera -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
@@ -205,7 +201,7 @@ $androidManifest = @"
         <!-- File Provider for file uploads/downloads -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="\${applicationId}.fileprovider"
+            android:authorities="`${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -470,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
         webSettings.setDomStorageEnabled(true);
 
         // Enable geolocation
-        webSettings.setGeolocationEnabled(true);
+        // webSettings.setGeolocationEnabled(true);
 
         // Enable zoom
         webSettings.setSupportZoom(true);
@@ -518,11 +514,11 @@ public class MainActivity extends AppCompatActivity {
         // WebChromeClient for advanced features
         webView.setWebChromeClient(new WebChromeClient() {
             // Geolocation permissions
-            @Override
-            public void onGeolocationPermissionsShowPrompt(String origin,
-                    GeolocationPermissions.Callback callback) {
-                callback.invoke(origin, true, false);
-            }
+            // @Override
+            // public void onGeolocationPermissionsShowPrompt(String origin,
+            //        GeolocationPermissions.Callback callback) {
+            //    callback.invoke(origin, true, false);
+            // }
 
             // File upload handling
             @Override
