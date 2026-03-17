@@ -1,8 +1,1 @@
-Kan sekarang ini pakai Admob untuk iklannya. Kembalikan menjadi Start.io lagi untuk iiklannya. Terus, yang di ./andro.yml, berarti kembali menjadi seperti ini:
-
-- title: ""
-- version: "1"
-- package: "com.mzaini30."
-- icon: ""
-- web: "html"
-- ads: ""
+Coba sesuaikan isi dari ./andro.md dengan kondisi saat ini
