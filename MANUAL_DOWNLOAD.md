@@ -79,7 +79,7 @@ The project has been configured with:
 ---
 
 ### 7. Android SDK Build-Tools 30.0.2
-**Download:** https://dl.google.com/android/repository/build-tools_r30.0.2-windows.zip
+**Download:** https://dl.google.com/android/repository/build-tools_r30.0.2-windows.zip (link mati)
 
 **Installation:**
 1. Extract to `D:\Android\Sdk\build-tools\30.0.2\`
