@@ -78,22 +78,6 @@ The project has been configured with:
 
 ---
 
-### 7. Android SDK Build-Tools 30.0.2
-**Download:** https://dl.google.com/android/repository/build-tools_r30.0.2-windows.zip (link mati)
-
-**Installation:**
-1. Extract to `D:\Android\Sdk\build-tools\30.0.2\`
-
----
-
-### 8. Android SDK Platform 33 (Android 13)
-**Download:** https://dl.google.com/android/repository/platform-33-ext4_r01.zip
-
-**Installation:**
-1. Extract to `D:\Android\Sdk\platforms\android-33\`
-
----
-
 ### 9. Platform-Tools (ADB & Fastboot)
 **Download:** https://dl.google.com/android/repository/platform-tools-latest-windows.zip
 
