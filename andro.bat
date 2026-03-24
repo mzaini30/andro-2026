@@ -306,8 +306,8 @@ if errorlevel 1 (
 )
 
 REM Update local.properties with actual SDK path (use forward slashes to avoid escaping issues)
-if exist "C:\Android\Sdk" (
-    echo sdk.dir=C:/Android/Sdk> "%ANDROID_DIR%\local.properties"
+if exist "D:\Android\Sdk" (
+    echo sdk.dir=D:/Android/Sdk> "%ANDROID_DIR%\local.properties"
 )
 
 REM Copy andro.md to output directory if it exists

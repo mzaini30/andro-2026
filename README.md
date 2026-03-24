@@ -189,7 +189,7 @@ java -version
 ### "ANDROID_HOME not set"
 ```bash
 # Windows (PowerShell)
-$env:ANDROID_HOME="C:\Users\YourName\AppData\Local\Android\Sdk"
+$env:ANDROID_HOME="D:\Android\Sdk"
 
 # Add to system environment variables for permanent fix
 ```
