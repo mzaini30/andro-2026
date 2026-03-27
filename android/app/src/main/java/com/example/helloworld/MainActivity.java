@@ -7,11 +7,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.view.View;
-import android.webkit.CookieManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
@@ -33,16 +30,11 @@ import androidx.core.content.FileProvider;
 import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewAssetLoader.AssetsPathHandler;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.startapp.sdk.adsbase.StartAppSDK;
 import com.startapp.sdk.adsbase.StartAppAd;
 import com.startapp.sdk.ads.banner.Banner;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private ValueCallback<Uri[]> fileUploadCallback;
     private static final int FILE_CHOOSER_REQUEST = 1;
     private static final int PERMISSION_REQUEST_CODE = 100;
-    private String currentPhotoPath;
 
     private static final String[] REQUIRED_PERMISSIONS = {
         Manifest.permission.CAMERA,
@@ -88,23 +79,20 @@ public class MainActivity extends AppCompatActivity {
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT);
 
-        if (!"202843390".isEmpty()) {
-            // Create Banner
-            Banner startAppBanner = new Banner(this);
-            startAppBanner.setId(View.generateViewId());
-            RelativeLayout.LayoutParams bannerParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT);
-            bannerParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            bannerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        // Create Banner
+        Banner startAppBanner = new Banner(this);
+        startAppBanner.setId(View.generateViewId());
+        RelativeLayout.LayoutParams bannerParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        bannerParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        bannerParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
-            // Align WebView above Banner
-            webViewParams.addRule(RelativeLayout.ABOVE, startAppBanner.getId());
+        // Align WebView above Banner
+        webViewParams.addRule(RelativeLayout.ABOVE, startAppBanner.getId());
 
-            // Add views to layout
-            layout.addView(startAppBanner, bannerParams);
-        }
-
+        // Add views to layout
+        layout.addView(startAppBanner, bannerParams);
         layout.addView(webView, webViewParams);
         setContentView(layout);
 
@@ -150,8 +138,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (!allGranted) {
-                Toast.makeText(this, "Some permissions were denied. Some features may not work.",
-                    Toast.LENGTH_LONG).show();
+                /* Toast.makeText(this, "Some permissions were denied. Some features may not work.",
+                    Toast.LENGTH_LONG).show(); */
             }
         }
     }

@@ -5,9 +5,9 @@
     <!-- Internet and Network -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" tools:node="remove"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-    <!-- Location/GPS -->
+    <!-- Location for Geolocation feature -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -40,8 +40,6 @@
 
     <!-- Vibration -->
     <uses-permission android:name="android.permission.VIBRATE" />
-
-    <!-- Application -->
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -51,7 +49,6 @@
         android:theme="@style/Theme.Andro"
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true">
-
         <!-- Start.io SDK Configuration -->
         <meta-data
             android:name="com.startapp.sdk.APPLICATION_ID"
@@ -59,7 +56,6 @@
         <meta-data
             android:name="com.startapp.sdk.RETURN_ADS_ENABLED"
             android:value="true" />
-
         <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
@@ -75,7 +71,7 @@
         <!-- File Provider for file uploads/downloads -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="\.fileprovider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

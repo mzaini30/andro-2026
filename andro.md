@@ -38,7 +38,18 @@ The configuration uses a list of key-value pairs:
 | `package` | Unique Android package ID (e.g., `com.example.app`) |
 | `icon` | Path to the launcher icon (PNG) |
 | `web` | Directory containing the web assets |
-| `ads` | Start.io App ID for monetization |
+| `ads` | Start.io App ID for monetization. **Leave empty** (`ads: ""`) to disable ads completely |
+
+### Conditional Ads Feature
+
+When `ads` is set to an empty string (`""`), the build system automatically:
+- Excludes Start.io SDK dependencies from `build.gradle`
+- Removes Start.io SDK initialization code from `MainActivity.java`
+- Removes banner and interstitial ad implementations
+- Excludes Start.io Maven repository from `settings.gradle`
+- Removes Start.io ProGuard rules
+
+This produces a cleaner, smaller APK without any ad-related code when monetization is not needed.
 
 ## Building and Running
 
@@ -112,6 +123,7 @@ const battery = JSON.parse(Android.getBatteryInfo());
 - **Banner ads** displayed at the bottom of the screen
 - **Interstitial ads** shown on back press (exit)
 - Configurable via `ads` field in `andro.yml`
+- **Set `ads: ""` to completely disable ads** (no SDK included)
 - See `android/ai/ads.txt` for complete Start.io SDK documentation
 
 ### Signed Releases

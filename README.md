@@ -35,7 +35,14 @@ Create an `andro.yml` file in the project root:
 | `package` | Android package name (must be unique) | `"com.example.app"` |
 | `icon` | Path to app icon image | `"icon.png"` |
 | `web` | Path to web assets folder (HTML/CSS/JS) | `"www"` |
-| `ads` | Start.io App ID for monetization | `"123456789"` |
+| `ads` | Start.io App ID for monetization. Leave empty (`""`) to disable ads | `"123456789"` or `""` |
+
+### Conditional Ads
+
+Set `ads: ""` to completely disable ads. The build system will:
+- Exclude Start.io SDK from the build
+- Remove ad-related code from the app
+- Produce a smaller, cleaner APK
 
 ## Features
 
